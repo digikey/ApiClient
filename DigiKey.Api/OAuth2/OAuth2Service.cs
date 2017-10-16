@@ -17,7 +17,6 @@ namespace DigiKey.Api.OAuth2
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
-
         private readonly string _redirectUri;
 
         public OAuth2Service(DigiKeyAppCredentials credentials, string redirectUri)
@@ -43,36 +42,6 @@ namespace DigiKey.Api.OAuth2
 
             return url;
 
-        }
-
-        public async Task<OAuth2AccessToken> ExchangeAuthCodeForAccessTokenAsync(string code)
-        {
-            var httpClient = new HttpClient();
-
-            var postUrl = DigiKeyUriConstants.TokenEndpoint;
-
-            var content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                new KeyValuePair<string, string>("client_id", _clientId),
-
-                //new KeyValuePair<string, string>("client_secret", AppSecret),
-                new KeyValuePair<string, string>("code", code),
-                new KeyValuePair<string, string>("redirect_uri", _redirectUri)
-            });
-
-
-            var clientIdConcatSecret = Base64Encode(_clientId + ":" + _clientSecret);
-
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Basic", clientIdConcatSecret);
-
-            var response = await httpClient.PostAsync(postUrl, content);
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            var accessToken = ParseAccessTokenResponse(responseString);
-
-            return accessToken;
         }
 
         /// <summary>
@@ -126,22 +95,6 @@ namespace DigiKey.Api.OAuth2
             var oAuth2TokenResponse = JsonConvert.DeserializeObject<OAuth2AccessTokenResponse>(text);
 
             return oAuth2TokenResponse;
-        }
-
-        public static OAuth2AccessToken ParseAccessTokenResponse(string responseString)
-        {
-            // assumption is the errors json will return in usual format eg. errors array
-            var responseObject = JObject.Parse(responseString);
-
-            var error = responseObject["errors"];
-            if (error != null)
-            {
-                // var errors = new JsonDotNetSerializer().ParseErrors(responseString);
-                throw new ArgumentException(
-                    $"Unable to parse token response in method -- {nameof(ParseAccessTokenResponse)}.");
-            }
-
-            return JsonConvert.DeserializeObject<OAuth2AccessToken>(responseString);
         }
 
         /// <summary>

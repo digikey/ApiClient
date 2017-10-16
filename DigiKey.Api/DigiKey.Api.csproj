@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Constants\DigiKeyUriConstants.cs" />
     <Compile Include="Constants\OAuth2Constants.cs" />
     <Compile Include="Models\DigiKeyAppCredentials.cs" />
