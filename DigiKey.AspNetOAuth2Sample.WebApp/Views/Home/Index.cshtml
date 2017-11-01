@@ -13,7 +13,7 @@
             <div class="col-md-12 col-xs-12">
                 <div class="panel panel-default">
                     <div class="panel-heading clearfix">
-                        <h3 class="panel-title">PingFederate OAuth2 Settings</h3>
+                        <h3 class="panel-title">OAuth2 Settings</h3>
                     </div>
                     <div class="panel-body">
                         <div class="row">
@@ -51,7 +51,7 @@
                                                     </label>
                                                 </td>
                                                 <td>
-                                                    @Html.TextBoxFor(m => m.Callback, new { @class = "col-md-11", @id = "Callback" })
+                                                    @Html.TextBoxFor(m => m.Callback, new { @class = "col-md-11", @id = "RedirectUri" })
                                                     @Html.ValidationMessageFor(model => model.Callback)
                                                 </td>
                                             </tr>

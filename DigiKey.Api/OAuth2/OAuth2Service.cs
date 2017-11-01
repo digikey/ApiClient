@@ -9,30 +9,31 @@ using DigiKey.Api.Constants;
 using DigiKey.Api.Models;
 using DigiKey.Api.OAuth2.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace DigiKey.Api.OAuth2
 {
     public class OAuth2Service
     {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _redirectUri;
+        private WebApiSettings _settings;
 
-        public OAuth2Service(DigiKeyAppCredentials credentials, string redirectUri)
+        public WebApiSettings Settings
         {
-            _clientId = credentials.ClientId;
-            _clientSecret = credentials.ClientSecret;
-            _redirectUri = redirectUri;
+            get => _settings;
+            set => _settings = value;
+        }
+
+        public OAuth2Service(WebApiSettings settings)
+        {
+            Settings = settings;
         }
 
         public string GenerateAuthUrl(string scopes = "", string state = null)
         {
             var url = string.Format("{0}?client_id={1}&scope={2}&redirect_uri={3}&response_type={4}",
                                     DigiKeyUriConstants.AuthorizationEndpoint,
-                                    _clientId,
+                                    Settings.ClientId,
                                     scopes,
-                                    _redirectUri,
+                                    Settings.RedirectUri,
                                     OAuth2Constants.ResponseTypes.Code);
 
             if (!string.IsNullOrWhiteSpace(state))
@@ -41,16 +42,14 @@ namespace DigiKey.Api.OAuth2
             }
 
             return url;
-
         }
 
         /// <summary>
         ///     Finishes authorization by passing the authorization code to the Token endpoint
         /// </summary>
         /// <param name="code"></param>
-        /// <param name="callback"></param>
-        /// <returns>returns OAuth2AccessTokenResponse</returns>
-        public async Task<OAuth2AccessTokenResponse> FinishAuthorization(string code, string callback)
+        /// <returns>returns OAuth2AccessToken</returns>
+        public async Task<OAuth2AccessToken> FinishAuthorization(string code)
         {
             ServicePointManager.ServerCertificateValidationCallback =
                 delegate { return true; };
@@ -60,41 +59,71 @@ namespace DigiKey.Api.OAuth2
             var body = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>(OAuth2Constants.Code, code),
-                new KeyValuePair<string, string>(OAuth2Constants.RedirectUri, callback),
-                new KeyValuePair<string, string>(OAuth2Constants.ClientId, _clientId),
-                new KeyValuePair<string, string>(OAuth2Constants.ClientSecret, _clientSecret),
-                new KeyValuePair<string, string>(OAuth2Constants.GrantType, OAuth2Constants.GrantTypes.AuthorizationCode)
+                new KeyValuePair<string, string>(OAuth2Constants.RedirectUri, Settings.RedirectUri),
+                new KeyValuePair<string, string>(OAuth2Constants.ClientId, Settings.ClientId),
+                new KeyValuePair<string, string>(OAuth2Constants.ClientSecret, Settings.ClientSecret),
+                new KeyValuePair<string, string>(OAuth2Constants.GrantType,
+                                                 OAuth2Constants.GrantTypes.AuthorizationCode)
             };
 
             // Request the token
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, DigiKeyUriConstants.TokenEndpoint);
 
-            var httpClient = new HttpClient { BaseAddress = DigiKeyUriConstants.BaseAddress };
+            var httpClient = new HttpClient {BaseAddress = DigiKeyUriConstants.BaseAddress};
 
             requestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             requestMessage.Content = new FormUrlEncodedContent(body);
             Console.WriteLine("HttpRequestMessage {0}", requestMessage.RequestUri.AbsoluteUri);
-            HttpResponseMessage tokenResponse = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
-            string text = await tokenResponse.Content.ReadAsStringAsync();
+            var tokenResponse = await httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var text = await tokenResponse.Content.ReadAsStringAsync();
 
             // Check if there was an error in the response
             if (!tokenResponse.IsSuccessStatusCode)
             {
-                HttpStatusCode status = tokenResponse.StatusCode;
+                var status = tokenResponse.StatusCode;
                 if (status == HttpStatusCode.BadRequest)
                 {
                     // Deserialize and return model
-                    var errorResponse = JsonConvert.DeserializeObject<OAuth2AccessTokenResponse>(text);
+                    var errorResponse = JsonConvert.DeserializeObject<OAuth2AccessToken>(text);
                     return errorResponse;
                 }
+
                 // Throw error
                 tokenResponse.EnsureSuccessStatusCode();
             }
 
             // Deserializes the token response if successfull
-            var oAuth2TokenResponse = JsonConvert.DeserializeObject<OAuth2AccessTokenResponse>(text);
+            var oAuth2Token = JsonConvert.DeserializeObject<OAuth2AccessToken>(text);
 
-            return oAuth2TokenResponse;
+            return oAuth2Token;
+        }
+        public async Task<OAuth2AccessToken> RefreshToken()
+        {
+            var postUrl = DigiKeyUriConstants.TokenEndpoint;
+
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                new KeyValuePair<string, string>("refresh_token", Settings.RefreshToken),
+            });
+
+            var httpClient = new HttpClient();
+
+            var clientIdConcatSecret = Base64Encode(Settings.ClientId + ":" + Settings.ClientSecret);
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", clientIdConcatSecret);
+
+            var response = await httpClient.PostAsync(postUrl, content);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            var oAuth2AccessTokenResponse = JsonConvert.DeserializeObject<OAuth2AccessToken>(responseString);
+
+            Settings.AccessToken = oAuth2AccessTokenResponse.AccessToken;
+            Settings.RefreshToken = oAuth2AccessTokenResponse.RefreshToken;
+            Settings.ExpirationDateTime = DateTime.Now.AddSeconds(oAuth2AccessTokenResponse.ExpiresIn);
+            Settings.Save();
+
+            return oAuth2AccessTokenResponse;
         }
 
         /// <summary>

@@ -11,6 +11,6 @@ namespace DigiKey.Api.OAuth2.Models
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string TokenEndpoint { get; set; }
-        public int RefreshToken { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

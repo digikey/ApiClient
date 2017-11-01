@@ -19,22 +19,22 @@ namespace DigiKey.AspNetOAuth2Sample.WebApp.ViewModels
         public string RefreshToken { get; set; }
         public DateTime ExpiresIn { get; set; }
 
-        public static DisplayInformationViewModel CreateFrom(DigiKeyAppCredentials appCredentials,
-                                                             OAuth2AccessTokenResponse oAuth2AccessTokenResponse)
+        public static DisplayInformationViewModel CreateFrom(WebApiSettings settings,
+                                                             OAuth2AccessToken oAuth2AccessToken)
         {
             var displayInformationViewModel = new DisplayInformationViewModel
             {
-                ClientId = appCredentials.ClientId,
-                ClientSecret = appCredentials.ClientSecret,
+                ClientId = settings.ClientId,
+                ClientSecret = settings.ClientSecret,
                 AuthorizationEndpoint = DigiKeyUriConstants.AuthorizationEndpoint.ToString(),
                 TokenEndpoint = DigiKeyUriConstants.TokenEndpoint.ToString(),
-                AccessToken = oAuth2AccessTokenResponse.AccessToken,
-                Error = oAuth2AccessTokenResponse.Error,
-                ErrorDescription = oAuth2AccessTokenResponse.ErrorDescription,
-                IdToken = oAuth2AccessTokenResponse.IdToken,
-                RefreshToken = oAuth2AccessTokenResponse.RefreshToken,
-                TokenType = oAuth2AccessTokenResponse.TokenType,
-                ExpiresIn = DateTime.Now.AddSeconds(oAuth2AccessTokenResponse.ExpiresIn)
+                AccessToken = oAuth2AccessToken.AccessToken,
+                Error = oAuth2AccessToken.Error,
+                ErrorDescription = oAuth2AccessToken.ErrorDescription,
+                IdToken = oAuth2AccessToken.IdToken,
+                RefreshToken = oAuth2AccessToken.RefreshToken,
+                TokenType = oAuth2AccessToken.TokenType,
+                ExpiresIn = DateTime.Now.AddSeconds(oAuth2AccessToken.ExpiresIn)
             };
             return displayInformationViewModel;
         }

@@ -30,11 +30,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Logging, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.4.1\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,15 +58,35 @@
   <ItemGroup>
     <Compile Include="Constants\DigiKeyUriConstants.cs" />
     <Compile Include="Constants\OAuth2Constants.cs" />
-    <Compile Include="Models\DigiKeyAppCredentials.cs" />
+    <Compile Include="Core\Configuration\ConfigurationHelper.cs" />
+    <Compile Include="Core\Configuration\Interfaces\IConfigurationHelper.cs" />
+    <Compile Include="Core\Configuration\Interfaces\IWebApiConfigHelper.cs" />
+    <Compile Include="Core\Configuration\WebApiConfigHelper.cs" />
+    <Compile Include="Core\DigiKeyHttpMessageHandler.cs" />
+    <Compile Include="Core\HttpRequestMessageExtensions.cs" />
+    <Compile Include="Core\IDigikeyInterceptor.cs" />
+    <Compile Include="DigiKeyClient.cs" />
+    <Compile Include="Exception\DigiKeyApiException.cs" />
+    <Compile Include="Exception\DigikeyApiRequestException.cs" />
+    <Compile Include="Exception\DigikeyApiUnauthorizedException.cs" />
+    <Compile Include="Extensions\DigikeyClientExtensions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Models\KeywordSearchRequest.cs" />
+    <Compile Include="Models\KeywordSearchResponse.cs" />
+    <Compile Include="Models\OAuth2Error.cs" />
+    <Compile Include="Models\WebApiSettings.cs" />
     <Compile Include="OAuth2\Models\OAuth2AccessToken.cs" />
-    <Compile Include="OAuth2\Models\OAuth2AccessTokenResponse.cs" />
     <Compile Include="OAuth2\Models\OAuth2RefreshTokenRequest.cs" />
+    <Compile Include="OAuth2\OAuth2RefreshTokenInterceptor.cs" />
     <Compile Include="OAuth2\OAuth2Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
