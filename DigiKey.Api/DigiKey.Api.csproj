@@ -64,7 +64,7 @@
     <Compile Include="Core\Configuration\WebApiConfigHelper.cs" />
     <Compile Include="Core\DigiKeyHttpMessageHandler.cs" />
     <Compile Include="Core\HttpRequestMessageExtensions.cs" />
-    <Compile Include="Core\IDigikeyInterceptor.cs" />
+    <Compile Include="Core\Interfaces\IDigikeyInterceptor.cs" />
     <Compile Include="DigiKeyClient.cs" />
     <Compile Include="Exception\DigiKeyApiException.cs" />
     <Compile Include="Exception\DigikeyApiRequestException.cs" />
@@ -85,8 +85,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
