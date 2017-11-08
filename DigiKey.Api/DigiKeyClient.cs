@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Common.Logging;
 using DigiKey.Api.Core;
+using DigiKey.Api.Core.Interfaces;
+using DigiKey.Api.Exception;
 using DigiKey.Api.Extensions;
 using DigiKey.Api.Models;
 using DigiKey.Api.OAuth2;
@@ -81,6 +83,11 @@ namespace DigiKey.Api
             catch (HttpRequestException e)
             {
                 Console.WriteLine(e.Message);
+                throw;
+            }
+            catch (DigikeyApiUnauthorizedException daue)
+            {
+                Console.WriteLine($"daue exception is {daue.Message}");
                 throw;
             }
         }

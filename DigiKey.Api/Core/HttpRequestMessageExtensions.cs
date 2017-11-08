@@ -6,6 +6,12 @@ namespace DigiKey.Api.Core
 {
     public static class HttpRequestMessageExtensions
     {
+        /// <summary>
+        /// Clones HttpRequestMessage.
+        /// https://stackoverflow.com/questions/25044166/how-to-clone-a-httprequestmessage-when-the-original-request-has-content 
+        /// </summary>
+        /// <param name="req">The req.</param>
+        /// <returns>Cloned HttpRequestMessage</returns>
         public static async Task<HttpRequestMessage> CloneAsync(this HttpRequestMessage req)
         {
             var clone = new HttpRequestMessage(req.Method, req.RequestUri);

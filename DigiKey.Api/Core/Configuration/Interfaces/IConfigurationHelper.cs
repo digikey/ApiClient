@@ -25,7 +25,7 @@ namespace DigiKey.Api.Core.Configuration.Interfaces
         ///     Gets the boolean attribute or value.
         /// </summary>
         /// <param name="attrName">Name of the attribute.</param>
-        /// <returns>true of false</returns>
+        /// <returns>true or false</returns>
         bool GetBooleanAttribute(string attrName);
 
         /// <summary>

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
+using Common.Logging;
 using DigiKey.Api.Constants;
 using DigiKey.Api.Models;
 using DigiKey.Api.OAuth2.Models;
@@ -12,8 +12,14 @@ using Newtonsoft.Json;
 
 namespace DigiKey.Api.OAuth2
 {
+    /// <summary>
+    /// OAuth2Service accepts WebApiSettings to use to initialize and finish an OAuth2 Authorization and 
+    /// get and set the Access Token and Refresh Token for the given ClientId and Client Secret in the WebApiSettings
+    /// </summary>
     public class OAuth2Service
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(OAuth2Service));
+
         private WebApiSettings _settings;
 
         public WebApiSettings Settings
@@ -27,6 +33,12 @@ namespace DigiKey.Api.OAuth2
             Settings = settings;
         }
 
+        /// <summary>
+        /// Generates the authentication URL based on WebApiSettings.
+        /// </summary>
+        /// <param name="scopes">This is current not used and should be "".</param>
+        /// <param name="state">This is not currently used.</param>
+        /// <returns>String which is the oauth2 authorization url.</returns>
         public string GenerateAuthUrl(string scopes = "", string state = null)
         {
             var url = string.Format("{0}?client_id={1}&scope={2}&redirect_uri={3}&response_type={4}",
@@ -40,6 +52,7 @@ namespace DigiKey.Api.OAuth2
             {
                 url = string.Format("{0}&state={1}", url, state);
             }
+            _log.DebugFormat($"Authorize Url is {url}");
 
             return url;
         }
@@ -47,13 +60,12 @@ namespace DigiKey.Api.OAuth2
         /// <summary>
         ///     Finishes authorization by passing the authorization code to the Token endpoint
         /// </summary>
-        /// <param name="code"></param>
-        /// <returns>returns OAuth2AccessToken</returns>
+        /// <param name="code">Code value returned by the RedirectUri callback</param>
+        /// <returns>Returns OAuth2AccessToken</returns>
         public async Task<OAuth2AccessToken> FinishAuthorization(string code)
         {
             ServicePointManager.ServerCertificateValidationCallback =
                 delegate { return true; };
-
 
             // Build up the body for the token request
             var body = new List<KeyValuePair<string, string>>
@@ -93,48 +105,53 @@ namespace DigiKey.Api.OAuth2
             }
 
             // Deserializes the token response if successfull
-            var oAuth2Token = JsonConvert.DeserializeObject<OAuth2AccessToken>(text);
+            var oAuth2Token = OAuth2Helpers.ParseOAuth2AccessTokenResponse(text);
+
+            _log.DebugFormat("FinishAuthorization: " + oAuth2Token);
 
             return oAuth2Token;
         }
-        public async Task<OAuth2AccessToken> RefreshToken()
+
+        /// <summary>
+        /// Refreshes the token asynchronous.
+        /// </summary>
+        /// <returns>Returns OAuth2AccessToken</returns>
+        public async Task<OAuth2AccessToken> RefreshTokenAsync()
+        {
+            return await RefreshTokenAsync(Settings);
+        }
+
+        /// <summary>
+        /// Refreshes the token asynchronous.
+        /// </summary>
+        /// <param name="settings">WebApiSettings needed for creating a proper refresh token HTTP post call.</param>
+        /// <returns>Returns OAuth2AccessToken</returns>
+        public static async Task<OAuth2AccessToken> RefreshTokenAsync(WebApiSettings settings)
         {
             var postUrl = DigiKeyUriConstants.TokenEndpoint;
 
             var content = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                new KeyValuePair<string, string>("refresh_token", Settings.RefreshToken),
+                new KeyValuePair<string, string>(OAuth2Constants.GrantType, OAuth2Constants.GrantTypes.RefreshToken),
+                new KeyValuePair<string, string>(OAuth2Constants.GrantTypes.RefreshToken, settings.RefreshToken),
             });
 
             var httpClient = new HttpClient();
 
-            var clientIdConcatSecret = Base64Encode(Settings.ClientId + ":" + Settings.ClientSecret);
+            var clientIdConcatSecret = OAuth2Helpers.Base64Encode(settings.ClientId + ":" + settings.ClientSecret);
             httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", clientIdConcatSecret);
 
             var response = await httpClient.PostAsync(postUrl, content);
             var responseString = await response.Content.ReadAsStringAsync();
 
-            var oAuth2AccessTokenResponse = JsonConvert.DeserializeObject<OAuth2AccessToken>(responseString);
+            var oAuth2AccessTokenResponse = OAuth2Helpers.ParseOAuth2AccessTokenResponse(responseString);
 
-            Settings.AccessToken = oAuth2AccessTokenResponse.AccessToken;
-            Settings.RefreshToken = oAuth2AccessTokenResponse.RefreshToken;
-            Settings.ExpirationDateTime = DateTime.Now.AddSeconds(oAuth2AccessTokenResponse.ExpiresIn);
-            Settings.Save();
+            _log.DebugFormat("RefreshToken: " + oAuth2AccessTokenResponse);
+
+            settings.UpdateAndSave(oAuth2AccessTokenResponse);
 
             return oAuth2AccessTokenResponse;
-        }
-
-        /// <summary>
-        ///     Convert plain text to a base 64 encoded string - http://stackoverflow.com/a/11743162
-        /// </summary>
-        /// <param name="plainText"></param>
-        /// <returns></returns>
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-            return Convert.ToBase64String(plainTextBytes);
         }
     }
 }

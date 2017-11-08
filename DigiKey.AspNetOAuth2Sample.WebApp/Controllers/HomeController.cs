@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Routing;
 using DigiKey.Api;
@@ -10,8 +6,8 @@ using DigiKey.Api.Constants;
 using DigiKey.Api.Models;
 using DigiKey.Api.OAuth2;
 using DigiKey.Api.OAuth2.Models;
+using DigiKey.AspNetOAuth2Sample.WebApp.Models;
 using DigiKey.AspNetOAuth2Sample.WebApp.ViewModels;
-using Newtonsoft.Json;
 
 namespace DigiKey.AspNetOAuth2Sample.WebApp.Controllers
 {
@@ -44,8 +40,7 @@ namespace DigiKey.AspNetOAuth2Sample.WebApp.Controllers
             SessionWebApiSettings.RedirectUri = authTokenModel.Callback;
 
             var authenticator = new OAuth2Service(SessionWebApiSettings);
-            var scopes = "";
-            var authUrl = authenticator.GenerateAuthUrl(scopes);
+            var authUrl = authenticator.GenerateAuthUrl("");
 
             return Redirect(authUrl);
         }
@@ -56,28 +51,21 @@ namespace DigiKey.AspNetOAuth2Sample.WebApp.Controllers
             var code = Request.Params["code"];
 
             var oAuth2AccessTokenResponse = authenticator.FinishAuthorization(code).Result;
-
-            // For this Demo we'll just put the needed values in the ASP.NET session
-
-            SessionWebApiSettings.AccessToken = oAuth2AccessTokenResponse.AccessToken;
-            SessionWebApiSettings.RefreshToken = oAuth2AccessTokenResponse.RefreshToken;
-            SessionWebApiSettings.ExpirationDateTime = DateTime.Now.AddSeconds(oAuth2AccessTokenResponse.ExpiresIn);
-            SessionWebApiSettings.Save();
+            SessionWebApiSettings.UpdateAndSave(oAuth2AccessTokenResponse);
 
             return RedirectToAction("DisplayInformation", new RouteValueDictionary(oAuth2AccessTokenResponse));
         }
 
         public ActionResult DisplayInformation(OAuth2AccessToken oAuth2AccessToken)
         {
-            var displayInformationViewModel =
-                DisplayInformationViewModel.CreateFrom(SessionWebApiSettings, oAuth2AccessToken);
+            var viewModel = DisplayInformationViewModel.CreateFrom(SessionWebApiSettings, oAuth2AccessToken);
 
-            return View(displayInformationViewModel);
+            return View(viewModel);
         }
 
         public ActionResult RefreshAuthorization()
         {
-            var viewModel = new OAuth2RefreshTokenRequest
+            var viewModel = new OAuth2RefreshTokenRequestViewModel
             {
                 RefreshToken = SessionWebApiSettings.RefreshToken,
                 ClientId = SessionWebApiSettings.ClientId,
@@ -91,33 +79,7 @@ namespace DigiKey.AspNetOAuth2Sample.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> RefreshToken(RefreshTokenViewModel refreshTokenViewModel)
         {
-            var postUrl = DigiKeyUriConstants.TokenEndpoint;
-
-            var content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                new KeyValuePair<string, string>("refresh_token", refreshTokenViewModel.RefreshToken),
-            });
-
-            var httpClient = new HttpClient();
-
-            var clientIdConcatSecret =
-                OAuth2Service.Base64Encode(SessionWebApiSettings.ClientId + ":" + SessionWebApiSettings.ClientSecret);
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Basic", clientIdConcatSecret);
-
-            var response = await httpClient.PostAsync(postUrl, content);
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            var oAuth2AccessTokenResponse = JsonConvert.DeserializeObject<OAuth2AccessToken>(responseString);
-
-            // For this Demo we'll just put the needed values in the ASP.NET session
-
-
-            SessionWebApiSettings.AccessToken = oAuth2AccessTokenResponse.AccessToken;
-            SessionWebApiSettings.RefreshToken = oAuth2AccessTokenResponse.RefreshToken;
-            SessionWebApiSettings.ExpirationDateTime = DateTime.Now.AddSeconds(oAuth2AccessTokenResponse.ExpiresIn);
-            SessionWebApiSettings.Save();
+            var oAuth2AccessTokenResponse = await OAuth2Service.RefreshTokenAsync(SessionWebApiSettings);
 
             return RedirectToAction("DisplayInformation", new RouteValueDictionary(oAuth2AccessTokenResponse));
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
+using Common.Logging;
 using DigiKey.Api.Core.Configuration.Interfaces;
 
 namespace DigiKey.Api.Core.Configuration
@@ -8,10 +9,11 @@ namespace DigiKey.Api.Core.Configuration
     /// <summary>
     ///     Helper classes that wrapps up working with System.Configuration.Configuration
     /// </summary>
-    /// <seealso cref="IConfigurationHelper" />
     [ExcludeFromCodeCoverage]
     public class ConfigurationHelper : IConfigurationHelper
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(ConfigurationHelper));
+
         /// <summary>
         ///     This object represents the config file
         /// </summary>
@@ -76,8 +78,21 @@ namespace DigiKey.Api.Core.Configuration
         /// </summary>
         public void Save()
         {
-            _config.Save(ConfigurationSaveMode.Full);
-            ConfigurationManager.RefreshSection("appSettings");
+            try
+            {
+                _config.Save(ConfigurationSaveMode.Full);
+                ConfigurationManager.RefreshSection("appSettings");
+            }
+            catch (ConfigurationErrorsException cee)
+            {
+                _log.DebugFormat($"Exception Message {cee.Message}");
+                throw;
+            }
+            catch (System.Exception ex)
+            {
+                _log.DebugFormat($"Exception Message {ex.Message}");
+                throw;
+            }
         }
 
         /// <summary>

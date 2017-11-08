@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using DigiKey.Api.Extensions;
+using Newtonsoft.Json;
 
 namespace DigiKey.Api.OAuth2.Models
 {
@@ -11,6 +14,8 @@ namespace DigiKey.Api.OAuth2.Models
         /// <summary>Gets or sets the error.</summary>
         [JsonProperty(PropertyName = "error")]
         public string Error { get; set; }
+
+        public bool IsError => Error.IsPresent();
 
         /// <summary>Gets or sets the error description.</summary>
         [JsonProperty(PropertyName = "error_description")]
@@ -31,5 +36,22 @@ namespace DigiKey.Api.OAuth2.Models
         /// <summary>Gets or sets the expiration in seconds from now.</summary>
         [JsonProperty(PropertyName = "expires_in")]
         public int ExpiresIn { get; set; }
+
+        [ExcludeFromCodeCoverage]
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(@"   ----------- [ OAuth2AccessToken ] ----------");
+            sb.AppendLine(@"     AccessToken      : " + AccessToken);
+            sb.AppendLine(@"     Error            : " + Error);
+            sb.AppendLine(@"     ErrorDescription : " + ErrorDescription);
+            sb.AppendLine(@"     IdToken          : " + IdToken);
+            sb.AppendLine(@"     RefreshToken     : " + RefreshToken);
+            sb.AppendLine(@"     TokenType        : " + TokenType);
+            sb.AppendLine(@"     ExpiresIn        : " + ExpiresIn);
+            sb.AppendLine(@"   ---------------------------------------------");
+
+            return sb.ToString();
+        }
     }
 }

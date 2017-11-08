@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using DigiKey.Api.Core;
+using DigiKey.Api.Core.Interfaces;
 
 namespace DigiKey.Api.Extensions
 {

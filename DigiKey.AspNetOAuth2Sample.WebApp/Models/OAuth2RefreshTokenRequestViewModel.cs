@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DigiKey.Api.OAuth2.Models
+﻿namespace DigiKey.AspNetOAuth2Sample.WebApp.Models
 {
-    public class OAuth2RefreshTokenRequest
+    public class OAuth2RefreshTokenRequestViewModel
     {
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }

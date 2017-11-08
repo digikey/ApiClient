@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using DigiKey.Api.Models;
 
 namespace DigiKey.Api.Core.Configuration
 {
@@ -23,10 +24,15 @@ namespace DigiKey.Api.Core.Configuration
         {
             try
             {
-                var configDir = AppDomain.CurrentDomain.BaseDirectory;
+                // Us this version of if you want to use webapi.config from bin/[Debug|Release] directory
+                // var configDir = AppDomain.CurrentDomain.BaseDirectory;
+
+                // Use this for writting the webapi.config in c:\users\<<user name>\AppData\Roaming\Digi-Key\DigiKey.API"
+                // Using this version we can use the same webapi.config for all the program in this solution.
+                var configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Digi-Key", "DigiKey.API");
                 var map = new ExeConfigurationFileMap
                 {
-                    ExeConfigFilename = Path.Combine(configDir, "webapi.config")
+                    ExeConfigFilename = Path.Combine(configDir, "webapi.config"),
                 };
                 Console.WriteLine($"map.ExeConfigFilename {map.ExeConfigFilename}");
                 _config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
@@ -95,7 +101,7 @@ namespace DigiKey.Api.Core.Configuration
             get
             {
                 var dateTime = GetAttribute(_ExpirationDateTime);
-                return DateTime.Parse(dateTime, null, DateTimeStyles.RoundtripKind);
+                return dateTime == null ? DateTime.MinValue : DateTime.Parse(dateTime, null, DateTimeStyles.RoundtripKind);
             }
             set
             {

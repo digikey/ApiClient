@@ -13,6 +13,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{C1F97BA9-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigiKey.Api.IntegrationExams", "DigiKey.Api.IntegrationExams\DigiKey.Api.IntegrationExams.csproj", "{6588AD5C-4864-4F6F-9E71-E0A3F5C63CDA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", "{52B0F528-B2AB-4BE8-9408-7D83017AB19D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigiKey.Api.OAuth2Service.ConsoleApp", "DigiKey.Api.OAuth2Service.ConsoleApp\DigiKey.Api.OAuth2Service.ConsoleApp.csproj", "{71F67A91-2362-4AAB-B16F-B7537E87DC51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigiKey.Api.DigiKeyClient.ConsoleApp", "DigiKey.Api.DigiKeyClient.ConsoleApp\DigiKey.Api.DigiKeyClient.ConsoleApp.csproj", "{419A2EF3-9C66-4BF8-BF8B-4B35CE4EB630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,13 +37,24 @@ Global
 		{6588AD5C-4864-4F6F-9E71-E0A3F5C63CDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6588AD5C-4864-4F6F-9E71-E0A3F5C63CDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6588AD5C-4864-4F6F-9E71-E0A3F5C63CDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71F67A91-2362-4AAB-B16F-B7537E87DC51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71F67A91-2362-4AAB-B16F-B7537E87DC51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71F67A91-2362-4AAB-B16F-B7537E87DC51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71F67A91-2362-4AAB-B16F-B7537E87DC51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{419A2EF3-9C66-4BF8-BF8B-4B35CE4EB630}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{419A2EF3-9C66-4BF8-BF8B-4B35CE4EB630}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{419A2EF3-9C66-4BF8-BF8B-4B35CE4EB630}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{419A2EF3-9C66-4BF8-BF8B-4B35CE4EB630}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{698FF1D6-2F24-4FB6-AE59-047F567D97BA} = {52B0F528-B2AB-4BE8-9408-7D83017AB19D}
 		{92CD332D-0BDB-4EB2-97B2-AA6FCEE4E495} = {C1F97BA9-95ED-42CD-AD0A-6E22DD1CC18A}
 		{6588AD5C-4864-4F6F-9E71-E0A3F5C63CDA} = {1633081F-CD7E-4D22-AA2C-F94FBAE096DC}
+		{71F67A91-2362-4AAB-B16F-B7537E87DC51} = {C1F97BA9-95ED-42CD-AD0A-6E22DD1CC18A}
+		{419A2EF3-9C66-4BF8-BF8B-4B35CE4EB630} = {C1F97BA9-95ED-42CD-AD0A-6E22DD1CC18A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9A6DA9DB-8B7A-47BC-943B-4292409AA943}

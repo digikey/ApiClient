@@ -11,18 +11,6 @@ namespace DigiKey.Api.IntegrationExams
     public class DigiKeyClientExams
     {
         [Test]
-        [Category("constructor")]
-        public void Constructor_CredsAndAcessTokenSet_ReturnsValidProperties()
-        {
-            var settings = WebApiSettings.CreateFromConfigFile();
-            var sut = new DigiKeyClient(settings);
-
-            Assert.IsNotNull(sut.HttpClient);
-            Assert.IsNotNull(sut.HttpClient);
-        }
-
-
-        [Test]
         [Category("KeywordSearch")]
         public async Task KeywordSearch_CredsAndAcessTokenSet_ReturnsValidProperties()
         {
@@ -44,8 +32,14 @@ namespace DigiKey.Api.IntegrationExams
             {
                 if (hre.Response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    // Let's try again after refreshing the AccessToken..
+                   Console.WriteLine("We most likely have an expired or invalid RefreshToken in our wepapi.config file");
+                    return;
                 }
+            }
+            catch (System.Exception hre)
+            {
+                Console.WriteLine($"Exception Error Message is {hre.Message}");
+                return;
             }
             Console.WriteLine($"postResponse is {postResponse}");
         }

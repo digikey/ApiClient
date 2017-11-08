@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using DigiKey.Api.Core.Interfaces;
 
 namespace DigiKey.Api.Core
 {
@@ -42,7 +43,7 @@ namespace DigiKey.Api.Core
 
             if (_interceptor != null)
             {
-                response = _interceptor.InterceptRequest(request, cancellationToken, DigiKeyClient);
+                response = _interceptor.OnRequest(request, cancellationToken, DigiKeyClient);
             }
 
             // Then highjack the request pipeline and return the HttpResponse returned by interceptor. 
@@ -78,7 +79,8 @@ namespace DigiKey.Api.Core
             {
                 return await responseTask;
             }
-            var response = await _interceptor.InterceptResponse(responseTask, cancellationToken, DigiKeyClient);
+
+            var response = await _interceptor.OnResponse(responseTask, cancellationToken, DigiKeyClient);
 
             //then highjack the request pipeline and return the HttpResponse returned by interceptor. Invoke Response handler at return.
             if (response != null)

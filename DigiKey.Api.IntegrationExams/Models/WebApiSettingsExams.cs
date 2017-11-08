@@ -23,6 +23,9 @@ namespace DigiKey.Api.IntegrationExams.Models
         {
             // Arrange 
             var settings = WebApiSettings.CreateFromConfigFile();
+            settings.Save();
+
+            // Act
 
             // Assert 
             Assert.AreEqual(settings.ClientId, WebApiConfigHelper.Instance().ClientId);
