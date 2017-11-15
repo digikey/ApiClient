@@ -56,10 +56,10 @@ namespace DigiKey.Api.DigiKeyClient.ConsoleApp
                 }
 
                 var client = new DigiKeySimpleClient(settings);
-                var response = client.KeywordSearch("P5555-ND");
+                var response = client.KeywordSearch("P5555-ND").Result;
 
                 // In order to pretty print the json object we need to do the following
-                string jsonFormatted = JValue.Parse(response.Result).ToString(Formatting.Indented);
+                string jsonFormatted = JValue.Parse(response).ToString(Formatting.Indented);
 
                 Console.WriteLine($"Reponse is {jsonFormatted} ");
             }

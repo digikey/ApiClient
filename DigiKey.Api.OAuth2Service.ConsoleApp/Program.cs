@@ -5,9 +5,8 @@ using System.Runtime.InteropServices;
 using System.Web;
 using DigiKey.Api.Extensions;
 using DigiKey.Api.Models;
-using DigiKey.Api.OAuth2;
 
-namespace DigiKey.Api.ConsoleApp
+namespace DigiKey.Api.OAuth2Service.ConsoleApp
 {
     public class Program
     {
@@ -41,7 +40,7 @@ namespace DigiKey.Api.ConsoleApp
             httpListener.Start();
 
             // Initialize our OAuth2 service
-            var oAuth2Service = new OAuth2Service(_settings);
+            var oAuth2Service = new OAuth2.OAuth2Service(_settings);
             var scopes = "";
 
             // create Authorize url and send call it thru Process.Start
