@@ -11,10 +11,10 @@ using DigiKey.Api.OAuth2;
 
 namespace DigiKey.Api
 {
-    public class DigiKeySimpleClient
+    public class DigiKeyApiClient
     {
-        private const string _CustomHeader = "DigiKey.NET-StaleTokenRetry";
-        private static readonly ILog _log = LogManager.GetLogger(typeof(DigiKeySimpleClient));
+        private const string _CustomHeader = "DigiKey.Api-StaleTokenRetry";
+        private static readonly ILog _log = LogManager.GetLogger(typeof(DigiKeyApiClient));
 
         private WebApiSettings _settings;
 
@@ -29,7 +29,7 @@ namespace DigiKey.Api
         /// </summary>
         public HttpClient HttpClient { get; private set; }
 
-        public DigiKeySimpleClient(WebApiSettings settings)
+        public DigiKeyApiClient(WebApiSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             Initialize();
@@ -48,7 +48,7 @@ namespace DigiKey.Api
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public void CheckIfAccessTokenIsExpired()
+        public void ResetExpiredAccessTokenIfNeeded()
         {
             if (_settings.ExpirationDateTime < DateTime.Now)
             {
@@ -62,9 +62,14 @@ namespace DigiKey.Api
                     return;
                 }
 
+                // Update the settings
                 _settings.UpdateAndSave(oAuth2AccessToken);
-                Console.WriteLine("DigiKeySimpleClient::CheckifAccessTokenIsExpired() call to refresh");
+                Console.WriteLine("DigiKeyClient::CheckifAccessTokenIsExpired() call to refresh");
                 Console.WriteLine(_settings.ToString());
+
+                // Reset the Authorization header value with the new access token.
+                var authenticationHeaderValue = new AuthenticationHeaderValue("Authorization", _settings.AccessToken);
+                HttpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
             }
         }
 
@@ -78,7 +83,7 @@ namespace DigiKey.Api
                 RecordCount = 25
             };
 
-            CheckIfAccessTokenIsExpired();
+            ResetExpiredAccessTokenIfNeeded();
             var postResponse = await PostAsJsonAsync(resourcePath, request);
 
             return GetServiceResponse(postResponse).Result;
@@ -101,7 +106,7 @@ namespace DigiKey.Api
                     {
                         _log.DebugFormat(
                             $"Stale access token detected ({_settings.AccessToken}. Calling RefreshTokenAsync to refresh it");
-                        await OAuth2Service.RefreshTokenAsync(_settings);
+                        await OAuth2Helpers.RefreshTokenAsync(_settings);
                         _log.DebugFormat($"New Access token is {_settings.AccessToken}");
 
                         //Only retry the first time.
@@ -114,9 +119,7 @@ namespace DigiKey.Api
                         }
                         else if (response.RequestMessage.Headers.Contains(_CustomHeader))
                         {
-                            throw new DigikeyApiUnauthorizedException(response,
-                                                                      message:
-                                                                      $"In interceptor {nameof(OAuth2RefreshTokenInterceptor)} inside method {nameof(PostAsJsonAsync)} we received an unexpected stale token response - during the retry for a call whose token we just refreshed {response.StatusCode}");
+                            throw new DigiKeyApiException($"Inside method {nameof(PostAsJsonAsync)} we received an unexpected stale token response - during the retry for a call whose token we just refreshed {response.StatusCode}", null);
                         }
                     }
                 }
@@ -128,9 +131,9 @@ namespace DigiKey.Api
                 Console.WriteLine(e.Message);
                 throw;
             }
-            catch (DigikeyApiUnauthorizedException daue)
+            catch (DigiKeyApiException dae)
             {
-                Console.WriteLine($"daue exception is {daue.Message}");
+                Console.WriteLine($"daue exception is {dae.Message}");
                 throw;
             }
         }

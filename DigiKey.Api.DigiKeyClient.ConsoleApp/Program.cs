@@ -55,7 +55,7 @@ namespace DigiKey.Api.DigiKeyClient.ConsoleApp
                     Console.WriteLine(settings.ToString());
                 }
 
-                var client = new DigiKeySimpleClient(settings);
+                var client = new DigiKeyApiClient(settings);
                 var response = client.KeywordSearch("P5555-ND").Result;
 
                 // In order to pretty print the json object we need to do the following

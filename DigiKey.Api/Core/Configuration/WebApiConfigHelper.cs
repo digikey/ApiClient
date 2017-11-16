@@ -28,7 +28,7 @@ namespace DigiKey.Api.Core.Configuration
                 // var configDir = AppDomain.CurrentDomain.BaseDirectory;
 
                 // Use this for writting the webapi.config in c:\users\<<user name>\AppData\Roaming\Digi-Key\DigiKey.API"
-                // Using this version we can use the same webapi.config for all the program in this solution.
+                // Using this version we can use the same webapi.config for all the programs in this solution.
                 var configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Digi-Key", "DigiKey.API");
                 var map = new ExeConfigurationFileMap
                 {

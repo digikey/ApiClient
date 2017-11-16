@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using Common.Logging;
+using DigiKey.Api.Constants;
 using DigiKey.Api.Exception;
 using DigiKey.Api.Models;
 using DigiKey.Api.OAuth2.Models;
@@ -39,6 +44,38 @@ namespace DigiKey.Api.OAuth2
             return Convert.ToBase64String(plainTextBytes);
         }
 
+        /// <summary>
+        /// Refreshes the token asynchronous.
+        /// </summary>
+        /// <param name="settings">WebApiSettings needed for creating a proper refresh token HTTP post call.</param>
+        /// <returns>Returns OAuth2AccessToken</returns>
+        public static async Task<OAuth2AccessToken> RefreshTokenAsync(WebApiSettings settings)
+        {
+            var postUrl = DigiKeyUriConstants.TokenEndpoint;
+
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>(OAuth2Constants.GrantType, OAuth2Constants.GrantTypes.RefreshToken),
+                new KeyValuePair<string, string>(OAuth2Constants.GrantTypes.RefreshToken, settings.RefreshToken),
+            });
+
+            var httpClient = new HttpClient();
+
+            var clientIdConcatSecret = OAuth2Helpers.Base64Encode(settings.ClientId + ":" + settings.ClientSecret);
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", clientIdConcatSecret);
+
+            var response = await httpClient.PostAsync(postUrl, content);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            var oAuth2AccessTokenResponse = OAuth2Helpers.ParseOAuth2AccessTokenResponse(responseString);
+
+            _log.DebugFormat("RefreshToken: " + oAuth2AccessTokenResponse);
+
+            settings.UpdateAndSave(oAuth2AccessTokenResponse);
+
+            return oAuth2AccessTokenResponse;
+        }
 
         /// <summary>
         ///     Parses the OAuth2 access token response.

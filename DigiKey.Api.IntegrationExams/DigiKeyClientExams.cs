@@ -16,7 +16,7 @@ namespace DigiKey.Api.IntegrationExams
         {
             var settings = WebApiSettings.CreateFromConfigFile();
 
-            var sut = new DigiKeyClient(settings);
+            var sut = new DigiKeyApiClient(settings);
 
             Assert.IsNotNull(sut.HttpClient);
             Assert.IsNotNull(sut.HttpClient);

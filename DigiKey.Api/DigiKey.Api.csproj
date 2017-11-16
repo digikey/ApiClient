@@ -62,26 +62,15 @@
     <Compile Include="Core\Configuration\Interfaces\IConfigurationHelper.cs" />
     <Compile Include="Core\Configuration\Interfaces\IWebApiConfigHelper.cs" />
     <Compile Include="Core\Configuration\WebApiConfigHelper.cs" />
-    <Compile Include="Core\DigiKeyHttpMessageHandler.cs" />
-    <Compile Include="Core\HttpRequestMessageExtensions.cs" />
-    <Compile Include="Core\Interfaces\IDigikeyInterceptor.cs" />
-    <Compile Include="DigiKeySimpleClient.cs" />
-    <Compile Include="DigiKeyClient.cs" />
+    <Compile Include="DigiKeyApiClient.cs" />
     <Compile Include="Exception\DigiKeyApiException.cs" />
-    <Compile Include="Exception\DigikeyApiRequestException.cs" />
-    <Compile Include="Exception\DigikeyApiUnauthorizedException.cs" />
-    <Compile Include="Exception\OAuth2InvalidGrantException.cs" />
-    <Compile Include="Extensions\DigikeyClientExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\KeywordSearchRequest.cs" />
-    <Compile Include="Models\KeywordSearchResponse.cs" />
     <Compile Include="Models\OAuth2Error.cs" />
     <Compile Include="Models\WebApiSettings.cs" />
     <Compile Include="OAuth2\Models\OAuth2AccessToken.cs" />
     <Compile Include="OAuth2\OAuth2Helpers.cs" />
-    <Compile Include="OAuth2\OAuth2RefreshTokenInterceptor.cs" />
     <Compile Include="OAuth2\OAuth2Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

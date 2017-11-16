@@ -79,7 +79,7 @@ namespace DigiKey.AspNetOAuth2Sample.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> RefreshToken(RefreshTokenViewModel refreshTokenViewModel)
         {
-            var oAuth2AccessTokenResponse = await OAuth2Service.RefreshTokenAsync(SessionWebApiSettings);
+            var oAuth2AccessTokenResponse = await OAuth2Helpers.RefreshTokenAsync(SessionWebApiSettings);
 
             return RedirectToAction("DisplayInformation", new RouteValueDictionary(oAuth2AccessTokenResponse));
         }
@@ -111,7 +111,7 @@ namespace DigiKey.AspNetOAuth2Sample.WebApp.Controllers
         [HttpPost]
         public async Task<string> DoSearch(string keyword)
         {
-            var client = new DigiKeyClient(SessionWebApiSettings);
+            var client = new DigiKeyApiClient(SessionWebApiSettings);
             return await client.KeywordSearch(keyword);
         }
     }
