@@ -43,7 +43,6 @@ function CleanupConfigFiles()
 
         foreach($n in $webApiConfig.configuration.appSettings.add)
         {
-			Write-Output "name is $n.key"
             switch($n.key)
             {
                 "WebApi.ClientId" { $n.value = "CHANGE_ME" }

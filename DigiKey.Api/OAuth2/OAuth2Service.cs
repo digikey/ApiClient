@@ -24,8 +24,8 @@ namespace DigiKey.Api.OAuth2
 
         public WebApiSettings Settings
         {
-            get => _settings;
-            set => _settings = value;
+            get { return _settings; }
+            set { _settings = value; }
         }
 
         public OAuth2Service(WebApiSettings settings)

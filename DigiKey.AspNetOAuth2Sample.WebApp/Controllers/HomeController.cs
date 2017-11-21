@@ -40,7 +40,7 @@ namespace DigiKey.AspNetOAuth2Sample.WebApp.Controllers
             SessionWebApiSettings.RedirectUri = authTokenModel.Callback;
 
             var authenticator = new OAuth2Service(SessionWebApiSettings);
-            var authUrl = authenticator.GenerateAuthUrl("");
+            var authUrl = authenticator.GenerateAuthUrl();
 
             return Redirect(authUrl);
         }

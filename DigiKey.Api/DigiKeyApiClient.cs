@@ -20,8 +20,8 @@ namespace DigiKey.Api
 
         public WebApiSettings Settings
         {
-            get => _settings;
-            set => _settings = value;
+            get { return _settings; }
+            set { _settings = value; }
         }
 
         /// <summary>
