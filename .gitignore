@@ -192,3 +192,4 @@ ModelManifest.xml
 .vs/
 !.vs/config/applicationhost.config
 #
+/DigiKey.Api.zip

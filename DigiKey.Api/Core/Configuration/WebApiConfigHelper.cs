@@ -53,8 +53,8 @@ namespace DigiKey.Api.Core.Configuration
         /// </summary>
         public string ClientId
         {
-            get => GetAttribute(_ClientId);
-            set => Update(_ClientId, value);
+            get { return GetAttribute(_ClientId); }
+            set { Update(_ClientId, value); }
         }
 
         /// <summary>
@@ -62,8 +62,8 @@ namespace DigiKey.Api.Core.Configuration
         /// </summary>
         public string ClientSecret
         {
-            get => GetAttribute(_ClientSecret);
-            set => Update(_ClientSecret, value);
+            get { return GetAttribute(_ClientSecret); }
+            set { Update(_ClientSecret, value); }
         }
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace DigiKey.Api.Core.Configuration
         /// </summary>
         public string RedirectUri
         {
-            get => GetAttribute(_RedirectUri);
-            set => Update(_RedirectUri, value);
+            get { return GetAttribute(_RedirectUri); }
+            set { Update(_RedirectUri, value); }
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace DigiKey.Api.Core.Configuration
         /// </summary>
         public string AccessToken
         {
-            get => GetAttribute(_AccessToken);
-            set => Update(_AccessToken, value);
+            get { return GetAttribute(_AccessToken); }
+            set { Update(_AccessToken, value); }
         }
 
         /// <summary>
@@ -89,8 +89,8 @@ namespace DigiKey.Api.Core.Configuration
         /// </summary>
         public string RefreshToken
         {
-            get => GetAttribute(_RefreshToken);
-            set => Update(_RefreshToken, value);
+            get { return GetAttribute(_RefreshToken); }
+            set { Update(_RefreshToken, value); }
         }
 
         /// <summary>

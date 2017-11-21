@@ -31,7 +31,10 @@ namespace DigiKey.Api
 
         public DigiKeyApiClient(WebApiSettings settings)
         {
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
             Initialize();
         }
 

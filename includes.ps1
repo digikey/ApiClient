@@ -1,54 +1,4 @@
 
-function Get-SvnRevision($dir) 
-{ 
-  ([xml](svn info $dir --xml)).info.entry.revision 
-}
-
-
-function RunMsBuild([string]$solutionPath,
-                    [string]$platform = "x86")
-{
-  try {
-    "msbuild $solutionPath $platform"
-    msbuild /p:Configuration=Release  /p:Platform="$platform" $solutionPath /t:rebuild
-  } catch [Exception] {
-    throw $_.Message
-    Send-Error
-  }
-  if ($LastExitCode -ne 0) {
-    throw "An error occured during invocation of MsBuild"
-    Send-Error
-  }
-}
-
-function RunDevEnv([string]$solutionPath, 
-                   [string]$projectPath, 
-                   [string]$devEnvPath, 
-                   [string]$tmpDir,
-                   [string]$platform = "x86")
-{
-  $parameters = "/rebuild `"Release|$platform`" ""$solutionPath"" /Project ""$projectPath"" /ProjectConfig Release /Out $tmpDir/devenv.log"
-  "Process to start [$devEnvPath $parameters]"
-  try {
-    $process = Start-Process -FilePath $devEnvPath -ArgumentList $parameters -Wait -PassThru
-    Write-Host "Exit Code is " $process.ExitCode
-
-    if($process.ExitCode -ne 0) {
-        throw "devenv process returned error code: $($p.ExitCode)"
-    }
-  } catch [Exception] {
-    throw $_.Message
-    Send-Error
-  }
-  if ($LastExitCode -ne 0) {
-    throw "An error occured during invocation of devenv"
-    Send-Error
-  }
-}
-
-
-
-
 [char[]]$trimChars = '/'
 function FixTerminatingSlash ($root) {
     return $root.TrimEnd($trimChars)   
@@ -97,37 +47,6 @@ function MakeFileWritable($file)
 {
   if (test-path $file) {
     Get-Item -Path $file | Set-ItemProperty -Name IsReadOnly -Value $false  
-  }
-}
-
-#-------------------------------------------------------------------------------
-# Update version numbers of AssemblyInfo.cs
-#-------------------------------------------------------------------------------
-function Update-CommonAssemblyInfoFiles
-{
-  param([string] $version5x, [string] $version4x) 
-
-  $assemblyVersionPattern = 'AssemblyVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
-  $fileVersionPattern = 'AssemblyFileVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
-  $infoVersionPattern = 'AssemblyInformationalVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
-  $assemblyVersion = 'AssemblyVersion("' + $version5x + '")';
-  $fileVersion = 'AssemblyFileVersion("' + $version5x + '")';
-  $infoVersion = 'AssemblyInformationalVersion("' + $version4x + '")';
-    
-  Get-ChildItem -r -filter CommonAssemblyInfo.cs | ForEach-Object {
-     $filename = $_.Directory.ToString() + '\' + $_.Name
-     $filename + ' -> ' + $version5x  + ' -> ' + $version4x
-        
-     # If you are using a source control that requires to check-out files before 
-     # modifying them, make sure to check-out the file here.
-     # For example, TFS will require the following command:
-     # tf checkout $filename
-    
-     (Get-Content $filename) | ForEach-Object {
-         % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
-         % {$_ -replace $infoVersionPattern, $infoVersion } |
-         % {$_ -replace $fileVersionPattern, $fileVersion }
-     } | Set-Content $filename
   }
 }
 
