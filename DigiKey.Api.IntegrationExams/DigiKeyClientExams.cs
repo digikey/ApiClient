@@ -19,7 +19,6 @@ namespace DigiKey.Api.IntegrationExams
             var sut = new DigiKeyApiClient(settings);
 
             Assert.IsNotNull(sut.HttpClient);
-            Assert.IsNotNull(sut.HttpClient);
 
             var postResponse = string.Empty;
             try

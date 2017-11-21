@@ -44,23 +44,5 @@ namespace DigiKey.Api.IntegrationExams.OAuth2
             // Assert 
             Assert.AreEqual(result.AccessToken, _ExpectedAccessToken);
         }
-
-
-        [Test]
-        public void PartQueryString_Test1()
-        {
-            // Arrange
-            var url = new Url("https://localhost:44300/Home/FinishAuth?code=H8DeJYhQUMw7urSVHkoTns900-tDVlW41O1IrgAC");
-            var queryString = "?code=H8DeJYhQUMw7urSVHkoTns900-tDVlW41O1IrgAC";
-
-            // Act
-            var queryColl = HttpUtility.ParseQueryString(queryString);
-
-            // Assert 
-            foreach (String s in queryColl.AllKeys)
-            {
-                Console.WriteLine(s + " - " + queryColl[s]);
-            }
-        }
     }
 }

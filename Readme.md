@@ -19,25 +19,30 @@ Console.WriteLine("respionse is {0}", postResponse);
 
 ### Project Contents
 
-* DigiKey.Api - Client Library
+* **DigiKey.Api** - Client Library that contains the code to manage a config file with OAuth2 settings and classes to do the  OAuth2 and DigiKey Authentication. 
 * DigiKey.Api.IntegrationExams - NUnit based Integration tests
-* DigiKey.IntegrationTests - NUnit integration tests with the API
-* DigiKey.AspNetOAUth2Sample.WebApp - An ASP.NET app using the OAuth2 client library
+* **DigiKey.AspNetOAUth2Sample.WebApp** - An ASP.NET app using the OAuth2 client library
+* **DigiKey.Api.DigiKeyClient.ConsoleApp** - Console app to test out programmatic refresh of access token when needed and also check if access token failed to work and then refresh and try again.
+* **DigiKey.Api.OAuth2Service.ConsoleApp** - Console app to create an access token and refresh token from the inform to user login to Digikey.
 
-### Getting Started  (Currently not correct.. )
+### Getting Started  
 
-1. Download the Project
-2. Go to dev.DigiKey.com and create an app account (ConsumerKey and ConsumerSecret). If you are debugging in Visual Studio, set the callback URL to localhost and your local debug port, something like localhost:12345/DigiKey/Callback
-3. Open webapi.config and replace the settings with the ones you obtained from DigiKey
+1. Download the zip file containing the solution Digikey.Api
+2. You may need to Register an application in to receive your unique
+   client ID and client secret, follow the steps (1 thru 4) from <https://api-portal.digikey.com/start>
+3. . If you are debugging in Visual Studio, set the callback URL to localhost and your local debug port, something like https://localhost:44300/Home/FinishAuth"
+4. Create the file webapi.config in c:\users\<<user name>\AppData\Roaming\Digi-Key\DigiKey.Api" your will need to create the directories under Roaming and replace the settings with the ones you obtained from DigiKey. Using this webapi.config file we can use the same configuration for all the programs in this solution.****
 ```
 <add key="WebApi.ClientId"" value="YOUR_CLIENT_ID_HERE" />
 <add key="WebApi.ClientSecret" value="YOUR_CLIENT_SECRET_HERE" />
 <add key="WebApi.RedirectUri"  value="YOUR_REDIRECT_URI_HERE" />
+<add key="WebApi.AccessToken" value="" />
+<add key="WebApi.RefreshToken" value="" />
+<add key="WebApi.ExpirationDateTime" value="" />
 ```
-4. Run the sample web MVC project
-5. (optional) Setting up the Integration Tests (which connect to the live API)
-  Open the Configuration.cs file and insert an app ConsumerKey and ConsumerSecret, then follow the 3 step process listed in that app. You're trying to end up with permanent oauth credentials, doing that once in NUnit and saving it locally.
+4. Run DigiKey.Api.OAuth2Service.ConsoleApp to set the access token, refresh token and expiration date in webapi.config. 
+5. Run DigiKey.Api.DigiKeyClient.ConsoleApp to get results from keyword search.
 
-### Meta
+
 
 
