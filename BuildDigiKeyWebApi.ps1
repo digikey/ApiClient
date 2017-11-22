@@ -65,6 +65,8 @@ $exclude = @('CreateZipFile', "_Resharper.Caches", 'DigiKeyApi', '.git', '.vs')
 $zipFilename = 'DigiKey.Api.zip'
 $compressor = "c:\Program Files\7-Zip\7z.exe"
 
+RemoveFile $zipFilename
+
 write-Host "From directory is $from"
 write-Host "to directory is $to"
 RemoveFolder $to
@@ -83,6 +85,4 @@ set-location -Path $dir
 # RemoveFile $zipFilename
 cmd /c $compressor a -tzip  $zipFilename "DigiKeyApi" -r 
 
-# cmd /c copy $zipname $deployPath /Y
-
-
+RemoveFolder $to
