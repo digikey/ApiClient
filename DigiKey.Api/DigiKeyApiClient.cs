@@ -35,6 +35,7 @@ namespace DigiKey.Api
             {
                 throw new ArgumentNullException(nameof(settings));
             }
+            Settings = settings;
             Initialize();
         }
 
