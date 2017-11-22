@@ -101,7 +101,11 @@ namespace DigiKey.Api.Core.Configuration
             get
             {
                 var dateTime = GetAttribute(_ExpirationDateTime);
-                return dateTime == null ? DateTime.MinValue : DateTime.Parse(dateTime, null, DateTimeStyles.RoundtripKind);
+                if (string.IsNullOrEmpty(dateTime))
+                {
+                    return DateTime.MinValue;
+                }
+                return DateTime.Parse(dateTime, null, DateTimeStyles.RoundtripKind);
             }
             set
             {

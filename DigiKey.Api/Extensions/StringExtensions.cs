@@ -19,6 +19,11 @@ namespace DigiKey.Api.Extensions
         [DebuggerStepThrough]
         public static string EnsureTrailingSlash(this string input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
             if (!input.EndsWith("/"))
             {
                 return input + "/";
