@@ -130,14 +130,14 @@ namespace DigiKey.Api
 
                 return response;
             }
-            catch (HttpRequestException e)
+            catch (HttpRequestException hre)
             {
-                Console.WriteLine(e.Message);
+                _log.DebugFormat($"PostAsJsonAsync<T>: HttpRequestException is {hre.Message}");
                 throw;
             }
             catch (DigiKeyApiException dae)
             {
-                Console.WriteLine($"daue exception is {dae.Message}");
+                _log.DebugFormat($"PostAsJsonAsync<T>: DigiKeyApiException is {dae.Message}");
                 throw;
             }
         }
