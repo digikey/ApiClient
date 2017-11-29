@@ -89,18 +89,15 @@
     <Content Include="SampleData\ApiError.json" />
     <Content Include="SampleData\InvalidGrantException.json" />
     <Content Include="SampleData\OAuth2AccessToken.json" />
-    <None Include="webapi.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DigiKey.Api\DigiKey.Api.csproj">
-      <Project>{698ff1d6-2f24-4fb6-ae59-047f567d97ba}</Project>
-      <Name>DigiKey.Api</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ApiClient\ApiClient.csproj">
+      <Project>{698FF1D6-2F24-4FB6-AE59-047F567D97BA}</Project>
+      <Name>ApiClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

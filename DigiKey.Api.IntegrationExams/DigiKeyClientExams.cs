@@ -2,7 +2,8 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using DigiKey.Api.Models;
+using ApiClient;
+using ApiClient.Models;
 using NUnit.Framework;
 
 namespace DigiKey.Api.IntegrationExams
@@ -14,9 +15,9 @@ namespace DigiKey.Api.IntegrationExams
         [Category("KeywordSearch")]
         public async Task KeywordSearch_CredsAndAcessTokenSet_ReturnsValidProperties()
         {
-            var settings = WebApiSettings.CreateFromConfigFile();
+            var settings = ApiClientSettings.CreateFromConfigFile();
 
-            var sut = new DigiKeyApiClient(settings);
+            var sut = new ApiClientService(settings);
 
             Assert.IsNotNull(sut.HttpClient);
 

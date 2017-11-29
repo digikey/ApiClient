@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Globalization;
-using System.Security.Policy;
-using System.Web;
-using DigiKey.Api.Models;
-using DigiKey.Api.OAuth2;
+using ApiClient.Models;
+using ApiClient.OAuth2;
 using NUnit.Framework;
 
 namespace DigiKey.Api.IntegrationExams.OAuth2
@@ -19,9 +17,9 @@ namespace DigiKey.Api.IntegrationExams.OAuth2
         private readonly DateTime _expectedExpirationDateTime =
             DateTime.Parse("2017-10-27T10:46:20.7102709-05:00", null, DateTimeStyles.RoundtripKind);
 
-        public WebApiSettings BuildWebApiSettings()
+        public ApiClientSettings BuildApiClientSettings()
         {
-            return new WebApiSettings()
+            return new ApiClientSettings()
             {
                 ClientId = _ExpectedClientId,
                 ClientSecret = _ExpectedClientSecret,
@@ -36,7 +34,7 @@ namespace DigiKey.Api.IntegrationExams.OAuth2
         public void Method_Scenario_Expected()
         {
             // Arrange
-            string content = SampleDataHelper.GetContent("AccessToken.json");
+            var content = SampleDataHelper.GetContent("AccessToken.json");
 
             // Act
             var result = OAuth2Helpers.ParseOAuth2AccessTokenResponse(content);
