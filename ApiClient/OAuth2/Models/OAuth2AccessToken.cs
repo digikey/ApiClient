@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DigiKey.Api.Extensions;
+using ApiClient.Extensions;
 using Newtonsoft.Json;
 
-namespace DigiKey.Api.OAuth2.Models
+namespace ApiClient.OAuth2.Models
 {
     public class OAuth2AccessToken
     {

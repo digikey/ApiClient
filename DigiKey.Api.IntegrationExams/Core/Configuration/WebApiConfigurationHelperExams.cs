@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Globalization;
-using DigiKey.Api.Core.Configuration;
+using System.IO;
+using System.Net.Mime;
+using ApiClient.Core.Configuration;
 using NUnit.Framework;
 
 namespace DigiKey.Api.IntegrationExams.Core.Configuration
 {
     [TestFixture]
-    public class WebApiConfigurationHelperExams
+    public class ApiClientConfigurationHelperExams
     {
         private const string _ExpectedClientId = "9b902e2c-15be-4d1d-afdc-c6c5f23588b1";
         private const string _ExpectedClientSecret = "K3xJ6jV2kK1gN4tT3gG5jL1tV0kE1iT5hO7iD4xQ7bT8fA4rH2";
@@ -25,7 +27,7 @@ namespace DigiKey.Api.IntegrationExams.Core.Configuration
         [Test]
         public void Read_ClientId_ReturnsSuccessfully()
         {
-            var result = WebApiConfigHelper.Instance().ClientId;
+            var result = ApiClientConfigHelper.Instance().ClientId;
 
             Assert.AreEqual(_ExpectedClientId, result);
         }
@@ -33,7 +35,7 @@ namespace DigiKey.Api.IntegrationExams.Core.Configuration
         [Test]
         public void Read_ClientSecret_ReturnsSuccessfully()
         {
-            var result = WebApiConfigHelper.Instance().ClientSecret;
+            var result = ApiClientConfigHelper.Instance().ClientSecret;
 
             Assert.AreEqual(_ExpectedClientSecret, result);
         }
@@ -41,7 +43,7 @@ namespace DigiKey.Api.IntegrationExams.Core.Configuration
         [Test]
         public void Read_Callback_ReturnsSuccessfully()
         {
-            var result = WebApiConfigHelper.Instance().RedirectUri;
+            var result = ApiClientConfigHelper.Instance().RedirectUri;
 
             Assert.AreEqual(_ExpectedCallback, result);
         }
@@ -49,7 +51,7 @@ namespace DigiKey.Api.IntegrationExams.Core.Configuration
         [Test]
         public void Read_AccessToken_ReturnsSuccessfully()
         {
-            var result = WebApiConfigHelper.Instance().AccessToken;
+            var result = ApiClientConfigHelper.Instance().AccessToken;
 
             Assert.AreEqual(_ExpectedAccessToken, result);
         }
@@ -57,7 +59,7 @@ namespace DigiKey.Api.IntegrationExams.Core.Configuration
         [Test]
         public void Read_RefreshToken_ReturnsSuccessfully()
         {
-            var result = WebApiConfigHelper.Instance().RefreshToken;
+            var result = ApiClientConfigHelper.Instance().RefreshToken;
 
             Assert.AreEqual(_ExpectedRefreshToken, result);
         }
@@ -65,7 +67,7 @@ namespace DigiKey.Api.IntegrationExams.Core.Configuration
         [Test]
         public void Read_ExpirationDateTime_ReturnsSuccessfully()
         {
-            var result = WebApiConfigHelper.Instance().ExpirationDateTime;
+            var result = ApiClientConfigHelper.Instance().ExpirationDateTime;
 
             Assert.AreEqual(_expectedExpirationDateTime, result);
         }
@@ -85,12 +87,38 @@ namespace DigiKey.Api.IntegrationExams.Core.Configuration
         [Test]
         public void Write_ClientId_ReturnsSuccessfully()
         {
-            WebApiConfigHelper.Instance().ClientId = _ExpectedWriteClientId;
+            ApiClientConfigHelper.Instance().ClientId = _ExpectedWriteClientId;
 
-            var result = WebApiConfigHelper.Instance().ClientId;
-            WebApiConfigHelper.Instance().Save();
+            var result = ApiClientConfigHelper.Instance().ClientId;
+            ApiClientConfigHelper.Instance().Save();
 
             Assert.AreEqual(_ExpectedWriteClientId, result);
+        }
+
+        [Test]
+        public void SolutionPath_Tests()
+        {
+            // Arrange
+            string solutionpath = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+
+            Console.WriteLine($"solutionPath is {solutionpath}");
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            Console.WriteLine($"solutionPath is {baseDir}");
+            var parentDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent;
+            Console.WriteLine($"solutionPath is {parentDir.FullName}");
+
+            if (File.Exists(Path.Combine(parentDir.FullName, "apiclient.config")))
+            {
+                Console.WriteLine("We found the config file");
+            }
+            else
+            {
+                Console.WriteLine("Where the heck are we!!");
+            }
+
+            // Act
+
+            // Assert 
         }
 
 

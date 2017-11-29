@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using ApiClient.Models;
+using ApiClient.OAuth2;
 using Common.Logging;
-using DigiKey.Api.Models;
-using DigiKey.Api.OAuth2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace DigiKey.Api.DigiKeyClient.ConsoleApp
+namespace ApiClient.ConsoleApp
 {
     public class Program
     {
@@ -25,10 +25,7 @@ namespace DigiKey.Api.DigiKeyClient.ConsoleApp
 
         private void CallKeywordSearch()
         {
-            // Brings the Console to Focus.
-            BringConsoleToFront();
-
-            var settings = WebApiSettings.CreateFromConfigFile();
+            var settings = ApiClientSettings.CreateFromConfigFile();
             _log.DebugFormat(settings.ToString());
             Console.WriteLine(settings.ToString());
             try
@@ -55,11 +52,11 @@ namespace DigiKey.Api.DigiKeyClient.ConsoleApp
                     Console.WriteLine(settings.ToString());
                 }
 
-                var client = new DigiKeyApiClient(settings);
+                var client = new ApiClientService(settings);
                 var response = client.KeywordSearch("P5555-ND").Result;
 
                 // In order to pretty print the json object we need to do the following
-                string jsonFormatted = JValue.Parse(response).ToString(Formatting.Indented);
+                var jsonFormatted = JToken.Parse(response).ToString(Formatting.Indented);
 
                 Console.WriteLine($"Reponse is {jsonFormatted} ");
             }
@@ -68,18 +65,6 @@ namespace DigiKey.Api.DigiKeyClient.ConsoleApp
                 Console.WriteLine(e);
                 throw;
             }
-        }
-        // Hack to bring the Console window to front.
-        [DllImport("kernel32.dll", ExactSpelling = true)]
-        private static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        public void BringConsoleToFront()
-        {
-            SetForegroundWindow(GetConsoleWindow());
         }
     }
 }

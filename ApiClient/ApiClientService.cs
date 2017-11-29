@@ -4,38 +4,38 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
+using ApiClient.Exception;
+using ApiClient.Models;
+using ApiClient.OAuth2;
 using Common.Logging;
-using DigiKey.Api.Exception;
-using DigiKey.Api.Models;
-using DigiKey.Api.OAuth2;
 
-namespace DigiKey.Api
+namespace ApiClient
 {
-    public class DigiKeyApiClient
+    public class ApiClientService
     {
-        private const string _CustomHeader = "DigiKey.Api-StaleTokenRetry";
-        private static readonly ILog _log = LogManager.GetLogger(typeof(DigiKeyApiClient));
+        private const string _CustomHeader = "Api-StaleTokenRetry";
+        private static readonly ILog _log = LogManager.GetLogger(typeof(ApiClientService));
 
-        private WebApiSettings _settings;
+        private ApiClientSettings _clientSettings;
 
-        public WebApiSettings Settings
+        public ApiClientSettings ClientSettings
         {
-            get { return _settings; }
-            set { _settings = value; }
+            get { return _clientSettings; }
+            set { _clientSettings = value; }
         }
 
         /// <summary>
-        ///     The httpclient which will be used for the api calls through the DigiKeyClient instance
+        ///     The httpclient which will be used for the api calls through the this instance
         /// </summary>
         public HttpClient HttpClient { get; private set; }
 
-        public DigiKeyApiClient(WebApiSettings settings)
+        public ApiClientService(ApiClientSettings clientSettings)
         {
-            if (settings == null)
+            if (clientSettings == null)
             {
-                throw new ArgumentNullException(nameof(settings));
+                throw new ArgumentNullException(nameof(clientSettings));
             }
-            Settings = settings;
+            ClientSettings = clientSettings;
             Initialize();
         }
 
@@ -45,19 +45,19 @@ namespace DigiKey.Api
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            var authenticationHeaderValue = new AuthenticationHeaderValue("Authorization", Settings.AccessToken);
+            var authenticationHeaderValue = new AuthenticationHeaderValue("Authorization", ClientSettings.AccessToken);
             HttpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
-            HttpClient.DefaultRequestHeaders.Add("X-IBM-Client-ID", Settings.ClientId);
+            HttpClient.DefaultRequestHeaders.Add("X-IBM-Client-ID", ClientSettings.ClientId);
             HttpClient.BaseAddress = new Uri("https://api.digikey.com");
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public void ResetExpiredAccessTokenIfNeeded()
         {
-            if (_settings.ExpirationDateTime < DateTime.Now)
+            if (_clientSettings.ExpirationDateTime < DateTime.Now)
             {
                 // Let's refresh the token
-                var oAuth2Service = new OAuth2Service(_settings);
+                var oAuth2Service = new OAuth2Service(_clientSettings);
                 var oAuth2AccessToken = oAuth2Service.RefreshTokenAsync().Result;
                 if (oAuth2AccessToken.IsError)
                 {
@@ -66,13 +66,13 @@ namespace DigiKey.Api
                     return;
                 }
 
-                // Update the settings
-                _settings.UpdateAndSave(oAuth2AccessToken);
-                Console.WriteLine("DigiKeyClient::CheckifAccessTokenIsExpired() call to refresh");
-                Console.WriteLine(_settings.ToString());
+                // Update the clientSettings
+                _clientSettings.UpdateAndSave(oAuth2AccessToken);
+                Console.WriteLine("ApiClientService::CheckifAccessTokenIsExpired() call to refresh");
+                Console.WriteLine(_clientSettings.ToString());
 
                 // Reset the Authorization header value with the new access token.
-                var authenticationHeaderValue = new AuthenticationHeaderValue("Authorization", _settings.AccessToken);
+                var authenticationHeaderValue = new AuthenticationHeaderValue("Authorization", _clientSettings.AccessToken);
                 HttpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
             }
         }
@@ -95,11 +95,11 @@ namespace DigiKey.Api
 
         public async Task<HttpResponseMessage> PostAsJsonAsync<T>(string resourcePath, T postRequest)
         {
-            _log.DebugFormat(">DigiKeyClient::PostAsJsonAsync()");
+            _log.DebugFormat(">ApiClientService::PostAsJsonAsync()");
             try
             {
                 var response = await HttpClient.PostAsJsonAsync(resourcePath, postRequest);
-                _log.DebugFormat("<DigiKeyClient::PostAsJsonAsync()");
+                _log.DebugFormat("<ApiClientService::PostAsJsonAsync()");
 
                 //Unauthorized, then there is a chance token is stale
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -109,21 +109,21 @@ namespace DigiKey.Api
                     if (OAuth2Helpers.IsTokenStale(responseBody))
                     {
                         _log.DebugFormat(
-                            $"Stale access token detected ({_settings.AccessToken}. Calling RefreshTokenAsync to refresh it");
-                        await OAuth2Helpers.RefreshTokenAsync(_settings);
-                        _log.DebugFormat($"New Access token is {_settings.AccessToken}");
+                            $"Stale access token detected ({_clientSettings.AccessToken}. Calling RefreshTokenAsync to refresh it");
+                        await OAuth2Helpers.RefreshTokenAsync(_clientSettings);
+                        _log.DebugFormat($"New Access token is {_clientSettings.AccessToken}");
 
                         //Only retry the first time.
                         if (!response.RequestMessage.Headers.Contains(_CustomHeader))
                         {
                             HttpClient.DefaultRequestHeaders.Add(_CustomHeader, _CustomHeader);
                             HttpClient.DefaultRequestHeaders.Authorization =
-                                new AuthenticationHeaderValue("Authorization", _settings.AccessToken);
+                                new AuthenticationHeaderValue("Authorization", _clientSettings.AccessToken);
                             return await PostAsJsonAsync(resourcePath, postRequest);
                         }
                         else if (response.RequestMessage.Headers.Contains(_CustomHeader))
                         {
-                            throw new DigiKeyApiException($"Inside method {nameof(PostAsJsonAsync)} we received an unexpected stale token response - during the retry for a call whose token we just refreshed {response.StatusCode}", null);
+                            throw new ApiException($"Inside method {nameof(PostAsJsonAsync)} we received an unexpected stale token response - during the retry for a call whose token we just refreshed {response.StatusCode}", null);
                         }
                     }
                 }
@@ -135,16 +135,16 @@ namespace DigiKey.Api
                 _log.DebugFormat($"PostAsJsonAsync<T>: HttpRequestException is {hre.Message}");
                 throw;
             }
-            catch (DigiKeyApiException dae)
+            catch (ApiException dae)
             {
-                _log.DebugFormat($"PostAsJsonAsync<T>: DigiKeyApiException is {dae.Message}");
+                _log.DebugFormat($"PostAsJsonAsync<T>: ApiException is {dae.Message}");
                 throw;
             }
         }
 
         protected async Task<string> GetServiceResponse(HttpResponseMessage response)
         {
-            _log.DebugFormat(">DigiKeyClient::GetServiceResponse()");
+            _log.DebugFormat(">ApiClientService::GetServiceResponse()");
             var postResponse = string.Empty;
 
             if (response.IsSuccessStatusCode)
@@ -169,7 +169,7 @@ namespace DigiKey.Api
                 throw new HttpResponseException(resp);
             }
 
-            _log.DebugFormat("<DigiKeyClient::GetServiceResponse()");
+            _log.DebugFormat("<ApiClientService::GetServiceResponse()");
             return postResponse;
         }
     }

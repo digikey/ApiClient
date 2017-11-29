@@ -1,36 +1,36 @@
 ﻿using System;
 
-namespace DigiKey.Api.Core.Configuration
+namespace ApiClient.Core.Configuration.Interfaces
 {
-    public interface IWebApiConfigHelper
+    public interface IApiClientConfigHelper
     {
         /// <summary>
-        ///     ClientId for WebApi Usage
+        ///     ClientId for ApiClient Usage
         /// </summary>
         string ClientId { get; set; }
 
         /// <summary>
-        ///     ClientSecret for WebApi Usage
+        ///     ClientSecret for ApiClient Usage
         /// </summary>
         string ClientSecret { get; set; }
 
         /// <summary>
-        ///     RedirectUri for WebApi Usage
+        ///     RedirectUri for ApiClient Usage
         /// </summary>
         string RedirectUri { get; set; }
 
         /// <summary>
-        ///     AccessToken for WebApi Usage
+        ///     AccessToken for ApiClient Usage
         /// </summary>
         string AccessToken { get; set; }
 
         /// <summary>
-        ///     RefreshToken for WebApi Usage
+        ///     RefreshToken for ApiClient Usage
         /// </summary>
         string RefreshToken { get; set; }
 
         /// <summary>
-        ///     ExpirationDateTime for WebApi Usage
+        ///     ExpirationDateTime for ApiClient Usage
         /// </summary>
         DateTime ExpirationDateTime { get; set; }
     }

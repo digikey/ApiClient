@@ -4,14 +4,14 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using ApiClient.Constants;
+using ApiClient.Exception;
+using ApiClient.Models;
+using ApiClient.OAuth2.Models;
 using Common.Logging;
-using DigiKey.Api.Constants;
-using DigiKey.Api.Exception;
-using DigiKey.Api.Models;
-using DigiKey.Api.OAuth2.Models;
 using Newtonsoft.Json;
 
-namespace DigiKey.Api.OAuth2
+namespace ApiClient.OAuth2
 {
     /// <summary>
     /// Helper functions for OAuth2Service class and other classes calling OAuth2Service functions
@@ -47,21 +47,21 @@ namespace DigiKey.Api.OAuth2
         /// <summary>
         /// Refreshes the token asynchronous.
         /// </summary>
-        /// <param name="settings">WebApiSettings needed for creating a proper refresh token HTTP post call.</param>
+        /// <param name="clientSettings">ApiClientSettings needed for creating a proper refresh token HTTP post call.</param>
         /// <returns>Returns OAuth2AccessToken</returns>
-        public static async Task<OAuth2AccessToken> RefreshTokenAsync(WebApiSettings settings)
+        public static async Task<OAuth2AccessToken> RefreshTokenAsync(ApiClientSettings clientSettings)
         {
             var postUrl = DigiKeyUriConstants.TokenEndpoint;
 
             var content = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>(OAuth2Constants.GrantType, OAuth2Constants.GrantTypes.RefreshToken),
-                new KeyValuePair<string, string>(OAuth2Constants.GrantTypes.RefreshToken, settings.RefreshToken),
+                new KeyValuePair<string, string>(OAuth2Constants.GrantTypes.RefreshToken, clientSettings.RefreshToken),
             });
 
             var httpClient = new HttpClient();
 
-            var clientIdConcatSecret = OAuth2Helpers.Base64Encode(settings.ClientId + ":" + settings.ClientSecret);
+            var clientIdConcatSecret = OAuth2Helpers.Base64Encode(clientSettings.ClientId + ":" + clientSettings.ClientSecret);
             httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", clientIdConcatSecret);
 
@@ -72,7 +72,7 @@ namespace DigiKey.Api.OAuth2
 
             _log.DebugFormat("RefreshToken: " + oAuth2AccessTokenResponse);
 
-            settings.UpdateAndSave(oAuth2AccessTokenResponse);
+            clientSettings.UpdateAndSave(oAuth2AccessTokenResponse);
 
             return oAuth2AccessTokenResponse;
         }
@@ -82,7 +82,7 @@ namespace DigiKey.Api.OAuth2
         /// </summary>
         /// <param name="response">The response.</param>
         /// <returns>instance of OAuth2AccessToken</returns>
-        /// <exception cref="DigiKeyApiException">ull)</exception>
+        /// <exception cref="ApiException">ull)</exception>
         public static OAuth2AccessToken ParseOAuth2AccessTokenResponse(string response)
         {
             try
@@ -95,7 +95,7 @@ namespace DigiKey.Api.OAuth2
             {
                 Console.WriteLine(e.Message);
                 _log.DebugFormat($"Unable to parse OAuth2 access token response {e.Message}");
-                throw new DigiKeyApiException($"Unable to parse OAuth2 access token response {e.Message}", null);
+                throw new ApiException($"Unable to parse OAuth2 access token response {e.Message}", null);
             }
         }
     }

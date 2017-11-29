@@ -68,14 +68,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="webapi.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DigiKey.Api\DigiKey.Api.csproj">
+    <ProjectReference Include="..\ApiClient\ApiClient.csproj">
       <Project>{698FF1D6-2F24-4FB6-AE59-047F567D97BA}</Project>
-      <Name>DigiKey.Api</Name>
+      <Name>ApiClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

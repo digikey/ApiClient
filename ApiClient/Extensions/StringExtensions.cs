@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace DigiKey.Api.Extensions
+namespace ApiClient.Extensions
 {
     public static class StringExtensions
     {

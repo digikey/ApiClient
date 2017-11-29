@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DigiKey.Api.Core.Configuration;
-using DigiKey.Api.OAuth2.Models;
+using ApiClient.Core.Configuration;
+using ApiClient.OAuth2.Models;
 
-namespace DigiKey.Api.Models
+namespace ApiClient.Models
 {
-    public class WebApiSettings
+    public class ApiClientSettings
     {
         public String ClientId { get; set; }
         public String ClientSecret { get; set; }
@@ -17,25 +17,25 @@ namespace DigiKey.Api.Models
 
         public void Save()
         {
-            WebApiConfigHelper.Instance().ClientId = ClientId;
-            WebApiConfigHelper.Instance().ClientSecret = ClientSecret;
-            WebApiConfigHelper.Instance().RedirectUri = RedirectUri;
-            WebApiConfigHelper.Instance().AccessToken = AccessToken;
-            WebApiConfigHelper.Instance().RefreshToken = RefreshToken;
-            WebApiConfigHelper.Instance().ExpirationDateTime = ExpirationDateTime;
-            WebApiConfigHelper.Instance().Save();
+            ApiClientConfigHelper.Instance().ClientId = ClientId;
+            ApiClientConfigHelper.Instance().ClientSecret = ClientSecret;
+            ApiClientConfigHelper.Instance().RedirectUri = RedirectUri;
+            ApiClientConfigHelper.Instance().AccessToken = AccessToken;
+            ApiClientConfigHelper.Instance().RefreshToken = RefreshToken;
+            ApiClientConfigHelper.Instance().ExpirationDateTime = ExpirationDateTime;
+            ApiClientConfigHelper.Instance().Save();
         }
 
-        public static WebApiSettings CreateFromConfigFile()
+        public static ApiClientSettings CreateFromConfigFile()
         {
-            return new WebApiSettings()
+            return new ApiClientSettings()
             {
-                ClientId = WebApiConfigHelper.Instance().ClientId,
-                ClientSecret = WebApiConfigHelper.Instance().ClientSecret,
-                RedirectUri = WebApiConfigHelper.Instance().RedirectUri,
-                AccessToken = WebApiConfigHelper.Instance().AccessToken,
-                RefreshToken = WebApiConfigHelper.Instance().RefreshToken,
-                ExpirationDateTime = WebApiConfigHelper.Instance().ExpirationDateTime,
+                ClientId = ApiClientConfigHelper.Instance().ClientId,
+                ClientSecret = ApiClientConfigHelper.Instance().ClientSecret,
+                RedirectUri = ApiClientConfigHelper.Instance().RedirectUri,
+                AccessToken = ApiClientConfigHelper.Instance().AccessToken,
+                RefreshToken = ApiClientConfigHelper.Instance().RefreshToken,
+                ExpirationDateTime = ApiClientConfigHelper.Instance().ExpirationDateTime,
             };
         }
 
@@ -50,7 +50,7 @@ namespace DigiKey.Api.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine(@"   ------------ [ WebApiSettings ] -------------");
+            sb.AppendLine(@"   ------------ [ ApiClientSettings ] -------------");
             sb.AppendLine(@"     ClientId            : " + ClientId);
             sb.AppendLine(@"     ClientSecret        : " + ClientSecret);
             sb.AppendLine(@"     RedirectUri         : " + RedirectUri);

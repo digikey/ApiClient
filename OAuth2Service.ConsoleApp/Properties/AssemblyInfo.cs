@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DigiKey.Api.OAuth2Service.ConsoleApp")]
+[assembly: AssemblyTitle("OAuth2Service.ConsoleApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Digi-Key Corporation")]
-[assembly: AssemblyProduct("DigiKey.Api.OAuth2Service.ConsoleApp")]
-[assembly: AssemblyCopyright("Copyright © Digi-Key Corporation 2017")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("OAuth2Service.ConsoleApp")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

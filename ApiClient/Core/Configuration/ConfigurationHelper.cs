@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
+using ApiClient.Core.Configuration.Interfaces;
 using Common.Logging;
-using DigiKey.Api.Core.Configuration.Interfaces;
 
-namespace DigiKey.Api.Core.Configuration
+namespace ApiClient.Core.Configuration
 {
     /// <summary>
     ///     Helper classes that wrapps up working with System.Configuration.Configuration

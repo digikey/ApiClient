@@ -2,54 +2,59 @@
 using System.Configuration;
 using System.Globalization;
 using System.IO;
-using DigiKey.Api.Models;
+using ApiClient.Core.Configuration.Interfaces;
+using ApiClient.Exception;
 
-namespace DigiKey.Api.Core.Configuration
+namespace ApiClient.Core.Configuration
 {
-    public class WebApiConfigHelper : ConfigurationHelper, IWebApiConfigHelper
+    public class ApiClientConfigHelper : ConfigurationHelper, IApiClientConfigHelper
     {
         // Static members are 'eagerly initialized', that is, 
         // immediately when class is loaded for the first time.
         // .NET guarantees thread safety for static initialization
-        private static readonly WebApiConfigHelper _thisInstance = new WebApiConfigHelper();
+        private static readonly ApiClientConfigHelper _thisInstance = new ApiClientConfigHelper();
 
-        private const string _ClientId = "WebApi.ClientId";
-        private const string _ClientSecret = "WebApi.ClientSecret";
-        private const string _RedirectUri = "WebApi.RedirectUri";
-        private const string _AccessToken = "WebApi.AccessToken";
-        private const string _RefreshToken = "WebApi.RefreshToken";
-        private const string _ExpirationDateTime = "WebApi.ExpirationDateTime";
+        private const string _ClientId = "ApiClient.ClientId";
+        private const string _ClientSecret = "ApiClient.ClientSecret";
+        private const string _RedirectUri = "ApiClient.RedirectUri";
+        private const string _AccessToken = "ApiClient.AccessToken";
+        private const string _RefreshToken = "ApiClient.RefreshToken";
+        private const string _ExpirationDateTime = "ApiClient.ExpirationDateTime";
 
-        private WebApiConfigHelper()
+        private ApiClientConfigHelper()
         {
             try
             {
-                // Us this version of if you want to use webapi.config from bin/[Debug|Release] directory
-                // var configDir = AppDomain.CurrentDomain.BaseDirectory;
+                // We are attempting to find the apiclient.config in the solution folder of this project
+                // Using this method we can use the same apiclient.config for all the programs in this solution.
+                var baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
+                var solutionDir = Directory.GetParent(baseDir).Parent.Parent;
 
-                // Use this for writing the webapi.config in c:\users\<<user name>\AppData\Roaming\Digi-Key\DigiKey.API"
-                // Using this version we can use the same webapi.config for all the programs in this solution.
-                var configDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Digi-Key", "DigiKey.API");
+                if (!File.Exists(Path.Combine(solutionDir.FullName, "apiclient.config")))
+                {
+                    throw new ApiException($"Unable to locate apiclient.config in solution folder {solutionDir.FullName}");
+                }
+
                 var map = new ExeConfigurationFileMap
                 {
-                    ExeConfigFilename = Path.Combine(configDir, "webapi.config"),
+                    ExeConfigFilename = Path.Combine(solutionDir.FullName, "apiclient.config"),
                 };
                 Console.WriteLine($"map.ExeConfigFilename {map.ExeConfigFilename}");
                 _config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                // Add something here 
+                throw new ApiException($"Error in ApiClientConfigHelper on opening up apiclient.config {ex.Message}");
             }
         }
 
-        public static WebApiConfigHelper Instance()
+        public static ApiClientConfigHelper Instance()
         {
             return _thisInstance;
         }
 
         /// <summary>
-        ///     ClientId for WebApi usage
+        ///     ClientId for ApiClient usage
         /// </summary>
         public string ClientId
         {
@@ -58,7 +63,7 @@ namespace DigiKey.Api.Core.Configuration
         }
 
         /// <summary>
-        ///     ClientSecret for WebApi usage
+        ///     ClientSecret for ApiClient usage
         /// </summary>
         public string ClientSecret
         {
@@ -67,7 +72,7 @@ namespace DigiKey.Api.Core.Configuration
         }
 
         /// <summary>
-        ///     RedirectUri for WebApi usage
+        ///     RedirectUri for ApiClient usage
         /// </summary>
         public string RedirectUri
         {
@@ -76,7 +81,7 @@ namespace DigiKey.Api.Core.Configuration
         }
 
         /// <summary>
-        ///     AccessToken for WebApi usage
+        ///     AccessToken for ApiClient usage
         /// </summary>
         public string AccessToken
         {
@@ -85,7 +90,7 @@ namespace DigiKey.Api.Core.Configuration
         }
 
         /// <summary>
-        ///     RefreshToken for WebApi usage
+        ///     RefreshToken for ApiClient usage
         /// </summary>
         public string RefreshToken
         {
@@ -94,7 +99,7 @@ namespace DigiKey.Api.Core.Configuration
         }
 
         /// <summary>
-        ///     Client for WebApi usage
+        ///     Client for ApiClient usage
         /// </summary>
         public DateTime ExpirationDateTime
         {

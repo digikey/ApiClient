@@ -7,8 +7,8 @@
     <ProjectGuid>{698FF1D6-2F24-4FB6-AE59-047F567D97BA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DigiKey.Api</RootNamespace>
-    <AssemblyName>DigiKey.Api</AssemblyName>
+    <RootNamespace>ApiClient</RootNamespace>
+    <AssemblyName>ApiClient</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -60,15 +60,14 @@
     <Compile Include="Constants\OAuth2Constants.cs" />
     <Compile Include="Core\Configuration\ConfigurationHelper.cs" />
     <Compile Include="Core\Configuration\Interfaces\IConfigurationHelper.cs" />
-    <Compile Include="Core\Configuration\Interfaces\IWebApiConfigHelper.cs" />
-    <Compile Include="Core\Configuration\WebApiConfigHelper.cs" />
-    <Compile Include="DigiKeyApiClient.cs" />
-    <Compile Include="Exception\DigiKeyApiException.cs" />
+    <Compile Include="Core\Configuration\Interfaces\IApiClientConfigHelper.cs" />
+    <Compile Include="Core\Configuration\ApiClientConfigHelper.cs" />
+    <Compile Include="ApiClientService.cs" />
+    <Compile Include="Exception\ApiException.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\KeywordSearchRequest.cs" />
     <Compile Include="Models\OAuth2Error.cs" />
-    <Compile Include="Models\WebApiSettings.cs" />
+    <Compile Include="Models\ApiClientSettings.cs" />
     <Compile Include="OAuth2\Models\OAuth2AccessToken.cs" />
     <Compile Include="OAuth2\OAuth2Helpers.cs" />
     <Compile Include="OAuth2\OAuth2Service.cs" />

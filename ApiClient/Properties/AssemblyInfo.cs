@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DigiKey.Api")]
+[assembly: AssemblyTitle("ApiClient")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Digi-Key Corporation")]
-[assembly: AssemblyProduct("DigiKey.Api")]
-[assembly: AssemblyCopyright("Copyright © Digi-Key Corporation 2017")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ApiClient")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,6 +34,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: InternalsVisibleTo("DigiKey.Api.Tests")]
-[assembly: InternalsVisibleTo("DigiKey.Api.Explorables")]
 

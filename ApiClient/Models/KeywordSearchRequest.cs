@@ -1,4 +1,4 @@
-﻿namespace DigiKey.Api.Models
+﻿namespace ApiClient.Models
 {
     /// <summary>
     ///     Very simple version of Keyword Search request for WebApp and IntegrationExams

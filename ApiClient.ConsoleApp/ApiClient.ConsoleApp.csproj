@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{419A2EF3-9C66-4BF8-BF8B-4B35CE4EB630}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DigiKey.Api.DigiKeyClient.ConsoleApp</RootNamespace>
-    <AssemblyName>DigiKey.Api.DigiKeyClient.ConsoleApp</AssemblyName>
+    <RootNamespace>ApiClient.ConsoleApp</RootNamespace>
+    <AssemblyName>ApiClient.ConsoleApp</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -62,10 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="webapi.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
     <None Include="NLog.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -73,9 +69,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DigiKey.Api\DigiKey.Api.csproj">
+    <ProjectReference Include="..\ApiClient\ApiClient.csproj">
       <Project>{698FF1D6-2F24-4FB6-AE59-047F567D97BA}</Project>
-      <Name>DigiKey.Api</Name>
+      <Name>ApiClient</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

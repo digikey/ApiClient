@@ -3,20 +3,20 @@ using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Web;
-using DigiKey.Api.Extensions;
-using DigiKey.Api.Models;
+using ApiClient.Extensions;
+using ApiClient.Models;
 
-namespace DigiKey.Api.OAuth2Service.ConsoleApp
+namespace OAuth2Service.ConsoleApp
 {
     public class Program
     {
-        private WebApiSettings _settings;
+        private ApiClientSettings _clientSettings;
 
         static void Main()
         {
             var prog = new Program();
 
-            // Read configuration values from webapi.config file and run OAuth2 code flow with OAuth2 Server
+            // Read configuration values from apiclient.config file and run OAuth2 code flow with OAuth2 Server
             prog.Authorize();
 
             // This will keep the console window up until a key is press in the console window.
@@ -25,22 +25,22 @@ namespace DigiKey.Api.OAuth2Service.ConsoleApp
         }
 
         /// <summary>
-        ///     OAuth2 code flow authorization with webapi.config values
+        ///     OAuth2 code flow authorization with apiclient.config values
         /// </summary>
         private async void Authorize()
         {
-            // read settings values from webapi.config
-            _settings = WebApiSettings.CreateFromConfigFile();
-            Console.WriteLine(_settings.ToString());
+            // read clientSettings values from apiclient.config
+            _clientSettings = ApiClientSettings.CreateFromConfigFile();
+            Console.WriteLine(_clientSettings.ToString());
 
             // start up a HttpListener for the callback(RedirectUri) from the OAuth2 server
             var httpListener = new HttpListener();
-            httpListener.Prefixes.Add(_settings.RedirectUri.EnsureTrailingSlash());
-            Console.WriteLine($"listening to {_settings.RedirectUri}");
+            httpListener.Prefixes.Add(_clientSettings.RedirectUri.EnsureTrailingSlash());
+            Console.WriteLine($"listening to {_clientSettings.RedirectUri}");
             httpListener.Start();
 
             // Initialize our OAuth2 service
-            var oAuth2Service = new OAuth2.OAuth2Service(_settings);
+            var oAuth2Service = new ApiClient.OAuth2.OAuth2Service(_clientSettings);
             var scopes = "";
 
             // create Authorize url and send call it thru Process.Start
@@ -61,9 +61,6 @@ namespace DigiKey.Api.OAuth2Service.ConsoleApp
             var code = queryColl["code"];
             Console.WriteLine($"Using code {code}");
 
-            // Brings the Console to Focus.
-            BringConsoleToFront();
-
             // Pass the returned code value to finish the OAuth2 authorization
             var result = await oAuth2Service.FinishAuthorization(code);
 
@@ -81,23 +78,10 @@ namespace DigiKey.Api.OAuth2Service.ConsoleApp
                 Console.WriteLine("Refresh token: {0}", result.RefreshToken);
                 Console.WriteLine("Expires in   : {0}", result.ExpiresIn);
 
-                _settings.UpdateAndSave(result);
+                _clientSettings.UpdateAndSave(result);
                 Console.WriteLine("After a good refresh");
-                Console.WriteLine(_settings.ToString());
+                Console.WriteLine(_clientSettings.ToString());
             }
-        }
-
-        // Hack to bring the Console window to front.
-        [DllImport("kernel32.dll", ExactSpelling = true)]
-        private static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        public void BringConsoleToFront()
-        {
-            SetForegroundWindow(GetConsoleWindow());
         }
     }
 }

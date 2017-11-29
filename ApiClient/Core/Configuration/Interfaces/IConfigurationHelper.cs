@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DigiKey.Api.Core.Configuration.Interfaces
+﻿namespace ApiClient.Core.Configuration.Interfaces
 {
     /// <summary>
     ///     Interface for System.Configuration.Configuration helper class

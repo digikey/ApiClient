@@ -4,37 +4,37 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using ApiClient.Constants;
+using ApiClient.Models;
+using ApiClient.OAuth2.Models;
 using Common.Logging;
-using DigiKey.Api.Constants;
-using DigiKey.Api.Models;
-using DigiKey.Api.OAuth2.Models;
 using Newtonsoft.Json;
 
-namespace DigiKey.Api.OAuth2
+namespace ApiClient.OAuth2
 {
     /// <summary>
-    /// OAuth2Service accepts WebApiSettings to use to initialize and finish an OAuth2 Authorization and 
-    /// get and set the Access Token and Refresh Token for the given ClientId and Client Secret in the WebApiSettings
+    /// OAuth2Service accepts ApiClientSettings to use to initialize and finish an OAuth2 Authorization and 
+    /// get and set the Access Token and Refresh Token for the given ClientId and Client Secret in the ApiClientSettings
     /// </summary>
     public class OAuth2Service
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof(OAuth2Service));
 
-        private WebApiSettings _settings;
+        private ApiClientSettings _clientSettings;
 
-        public WebApiSettings Settings
+        public ApiClientSettings ClientSettings
         {
-            get { return _settings; }
-            set { _settings = value; }
+            get { return _clientSettings; }
+            set { _clientSettings = value; }
         }
 
-        public OAuth2Service(WebApiSettings settings)
+        public OAuth2Service(ApiClientSettings clientSettings)
         {
-            Settings = settings;
+            ClientSettings = clientSettings;
         }
 
         /// <summary>
-        /// Generates the authentication URL based on WebApiSettings.
+        /// Generates the authentication URL based on ApiClientSettings.
         /// </summary>
         /// <param name="scopes">This is current not used and should be "".</param>
         /// <param name="state">This is not currently used.</param>
@@ -43,10 +43,10 @@ namespace DigiKey.Api.OAuth2
         {
             var url = string.Format("{0}?client_id={1}&scope={2}&redirect_uri={3}&response_type={4}",
                                     DigiKeyUriConstants.AuthorizationEndpoint,
-                                    Settings.ClientId,
+                                    ClientSettings.ClientId,
                                     scopes,
-                                    Settings.RedirectUri,
-                                    OAuth2Constants.ResponseTypes.Code);
+                                    ClientSettings.RedirectUri,
+                                    OAuth2Constants.ResponseTypes.CodeResponse);
 
             if (!string.IsNullOrWhiteSpace(state))
             {
@@ -71,9 +71,9 @@ namespace DigiKey.Api.OAuth2
             var body = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>(OAuth2Constants.Code, code),
-                new KeyValuePair<string, string>(OAuth2Constants.RedirectUri, Settings.RedirectUri),
-                new KeyValuePair<string, string>(OAuth2Constants.ClientId, Settings.ClientId),
-                new KeyValuePair<string, string>(OAuth2Constants.ClientSecret, Settings.ClientSecret),
+                new KeyValuePair<string, string>(OAuth2Constants.RedirectUri, ClientSettings.RedirectUri),
+                new KeyValuePair<string, string>(OAuth2Constants.ClientId, ClientSettings.ClientId),
+                new KeyValuePair<string, string>(OAuth2Constants.ClientSecret, ClientSettings.ClientSecret),
                 new KeyValuePair<string, string>(OAuth2Constants.GrantType,
                                                  OAuth2Constants.GrantTypes.AuthorizationCode)
             };
@@ -118,7 +118,7 @@ namespace DigiKey.Api.OAuth2
         /// <returns>Returns OAuth2AccessToken</returns>
         public async Task<OAuth2AccessToken> RefreshTokenAsync()
         {
-            return await OAuth2Helpers.RefreshTokenAsync(Settings);
+            return await OAuth2Helpers.RefreshTokenAsync(ClientSettings);
         }
 
         

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DigiKey.Api.Constants
+namespace ApiClient.Constants
 {
     /// <summary>
     ///     Uri constants to talk to our OAuth2 server implementation.
