@@ -25,8 +25,8 @@ namespace ApiClient.Core.Configuration
         {
             try
             {
-                // We are attempting to find the apiclient.config in the solution folder of this project
-                // Using this method we can use the same apiclient.config for all the programs in this solution.
+                // We are attempting to find the apiclient.config file in the solution folder for this project
+                // Using this method we can use the same apiclient.config for all the projects in this solution.
                 var baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
                 var solutionDir = Directory.GetParent(baseDir).Parent.Parent;
 

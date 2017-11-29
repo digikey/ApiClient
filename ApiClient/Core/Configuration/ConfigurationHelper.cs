@@ -7,7 +7,7 @@ using Common.Logging;
 namespace ApiClient.Core.Configuration
 {
     /// <summary>
-    ///     Helper classes that wrapps up working with System.Configuration.Configuration
+    ///     Helper class that wraps up working with System.Configuration.Configuration
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class ConfigurationHelper : IConfigurationHelper

@@ -18,7 +18,7 @@ namespace ApiClient.ConsoleApp
 
             prog.CallKeywordSearch();
 
-            // This will keep the console window up until a key is press in the console window.
+            // This will keep the console window up until a key is pressed in the console window.
             Console.WriteLine("\n\nPress any key to exit...");
             Console.ReadKey();
         }
