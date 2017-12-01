@@ -30,39 +30,39 @@ function CleanupFiles()
 #
 function CleanupConfigFiles()
 {
-    $configFiles=get-childitem . webapi.config -Exclude Nuget.config, packages.config -rec
+    $configFiles=get-childitem . apiclient.config -Exclude Nuget.config, packages.config -rec
     foreach ($file in $configFiles)
     {
         Write-Output "Config file name is $file"
         # MakeFileWritable $file
         # get the full path and file name of the App.config file in the same directory as this script
         # initialize the xml object
-        $webApiConfig = New-Object XML
+        $apiClientConfig = New-Object XML
         # load the config file as an xml object
-        $webApiConfig.Load($file)
+        $apiClientConfig.Load($file)
 
-        foreach($n in $webApiConfig.configuration.appSettings.add)
+        foreach($n in $apiClientConfig.configuration.appSettings.add)
         {
             switch($n.key)
             {
-                "WebApi.ClientId" { $n.value = "CHANGE_ME" }
-                "WebApi.ClientSecret" { $n.value = "CHANGE_ME" }
-                "WebApi.RedirectUri" { $n.value = "CHANGE_ME" }
-                "WebApi.AccessToken" { $n.value = "" }
-                "WebApi.RefreshToken" { $n.value = "" }
-                "WebApi.ExpirationDateTime" { $n.value = "" }
+                "ApiClient.ClientId" { $n.value = "CHANGE_ME" }
+                "ApiClient.ClientSecret" { $n.value = "CHANGE_ME" }
+                "ApiClient.RedirectUri" { $n.value = "CHANGE_ME" }
+                "ApiClient.AccessToken" { $n.value = "" }
+                "ApiClient.RefreshToken" { $n.value = "" }
+                "ApiClient.ExpirationDateTime" { $n.value = "" }
             }
         }
-        $webApiConfig.Save($file)
+        $apiClientConfig.Save($file)
     }
 }
 
 $from = $baseDir
-$to = CombinePaths $dir "DigiKeyApi"
+$to = CombinePaths $dir "ApiClientSource"
 $CreateZipFileDir = CombinePaths $from "CreateZipFile"
-$exclude = @('CreateZipFile', "_Resharper.Caches", 'DigiKeyApi', '.git', '.vs')
+$exclude = @('CreateZipFile', "_Resharper.Caches", 'ApiClientSource', '.git', '.vs')
 
-$zipFilename = 'DigiKey.Api.zip'
+$zipFilename = 'ApiClientSource.7z'
 $compressor = "c:\Program Files\7-Zip\7z.exe"
 
 RemoveFile $zipFilename
@@ -83,6 +83,6 @@ CleanupConfigFiles
 set-location -Path $dir  
 
 # RemoveFile $zipFilename
-cmd /c $compressor a -tzip  $zipFilename "DigiKeyApi" -r 
+cmd /c $compressor a -t7z  $zipFilename "ApiClientSource" -r 
 
 RemoveFolder $to

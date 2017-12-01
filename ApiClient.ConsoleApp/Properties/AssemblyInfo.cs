@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ApiClient.ConsoleApp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Digi-Key Corporation")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ApiClient.ConsoleApp")]
-[assembly: AssemblyCopyright("Copyright © Digi-Key Corporation 2017")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
