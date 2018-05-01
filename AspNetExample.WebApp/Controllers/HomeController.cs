@@ -33,6 +33,7 @@ namespace AspNetExample.WebApp.Controllers
             ClientSettings.ClientId = settingsViewModel.ClientId;
             ClientSettings.ClientSecret = settingsViewModel.ClientSecret;
             ClientSettings.RedirectUri = settingsViewModel.RedirectUri;
+            ClientSettings.Save();  
 
             UpdateOAuth2Service(ClientSettings);
 
