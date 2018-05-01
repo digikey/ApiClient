@@ -44,7 +44,7 @@ Console.WriteLine("response is {0}", postResponse);
 
 ### Asp.Net Example Web Application
 
-This is just a simple Asp.Net application that does the OAuth2 calls to update or create the access and refresh tokens for the given Client information.
+This is just a simple Asp.Net application that does the OAuth2 calls to update or create the access and refresh tokens for the given client information.
 
 The user will need to update their applicationhost.config file in .vs/config with the following line that sets the https binding.
 
@@ -56,4 +56,5 @@ The user will need to update their applicationhost.config file in .vs/config wit
         </bindings>
     </site>
 
-This will allow an https callback for the OAuth2 RedirectUri
+This will allow a https callback for the OAuth2 RedirectUri
+  ex:  https://localhost:44300/Home/FinishAuth
