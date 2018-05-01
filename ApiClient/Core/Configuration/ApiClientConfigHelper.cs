@@ -15,6 +15,7 @@ using System;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using ApiClient.Core.Configuration.Interfaces;
 using ApiClient.Exception;
 
@@ -38,10 +39,16 @@ namespace ApiClient.Core.Configuration
         {
             try
             {
+                string regexPattern = @"^(.*)(\\bin\\)(.*)$";
+
                 // We are attempting to find the apiclient.config file in the solution folder for this project
                 // Using this method we can use the same apiclient.config for all the projects in this solution.
                 var baseDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
-                var solutionDir = Directory.GetParent(baseDir).Parent.Parent;
+
+                // This little hack is ugly but needed to work with Console apps and Asp.Net apps.
+                var solutionDir = Regex.IsMatch(baseDir, regexPattern)
+                    ? Directory.GetParent(baseDir).Parent.Parent   // Console Apps
+                    : Directory.GetParent(baseDir);    // Asp.Net apps
 
                 if (!File.Exists(Path.Combine(solutionDir.FullName, "apiclient.config")))
                 {
