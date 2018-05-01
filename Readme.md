@@ -42,5 +42,18 @@ Console.WriteLine("response is {0}", postResponse);
 5. Run ApiClient.ConsoleApp to get results from keyword search.
 
 
+### Asp.Net Example Web Application
 
+This is just a simple Asp.Net application that does the OAuth2 calls to update or create the access and refresh tokens for the given Client information.
 
+The user will need to update their applicationhost.config file in .vs/config with the following line that sets the https binding.
+
+    <site name="AspNetExample.WebApp" id="5">
+        .
+        .
+        <bindings>
+            <binding protocol="https" bindingInformation="*:44300:localhost" />
+        </bindings>
+    </site>
+
+This will allow an https callback for the OAuth2 RedirectUri
